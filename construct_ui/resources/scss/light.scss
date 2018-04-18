@@ -1,0 +1,8 @@
+$font-stack: Helvetica, sans-serif;
+$primary-color: #CCC;
+
+
+QWidget {
+    font: 100% $font-stack;
+    background: $primary-color;
+}
