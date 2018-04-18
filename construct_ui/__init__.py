@@ -8,3 +8,6 @@ __author__ = 'Dan Bradham'
 __email__ = 'danielbradham@gmail.com'
 __license__ = 'MIT'
 __url__ = 'https://github.com/construct-org/construct_ui'
+
+
+from construct_ui.menus import ActionMenu
