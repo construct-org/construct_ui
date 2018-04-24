@@ -6,8 +6,9 @@ from Qt import QtWidgets
 
 
 class ActionMenu(QtWidgets.QMenu):
-    '''Menu generated from a Context. Presents all available Actions as
-    qmenu actions organized by Action identifier.
+    '''Menu generated from the current context. Presents all available Actions
+    grouped by Action identifier. For example all Actions with identifiers
+    matching launch.* will appear in a submenu named Launch.
     '''
 
     def __init__(self, name, parent=None):
