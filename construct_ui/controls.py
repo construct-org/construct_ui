@@ -1,8 +1,15 @@
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import
 '''
-Parameter Controls
-==================
+Controls
+========
+Wraps all standard control widgets providing a unified api.
+
+- Controls emit a **changed** signal when the controls value changes
+- `Control.get` gets the value of a control
+- `Control.set` sets the value of a control
 '''
-from Qt import QtWidgets, QtCore
+from Qt import QtWidgets, QtCore, QtGui
 
 
 class Control(object):
@@ -15,7 +22,7 @@ class Control(object):
         self.create()
 
     def emit_changed(self):
-        print('CHANGE', self)
+        print(self.name, self.get())
         self.changed.emit(self)
 
     def create(self):
@@ -215,7 +222,7 @@ class OptionControl(Control, QtWidgets.QComboBox):
     def create(self):
         self.activated.connect(self.emit_changed)
         if self.options:
-            self.set_options(options)
+            self.set_options(self.options)
 
     def get_options(self, options):
         return self.options
@@ -251,6 +258,86 @@ class IntOptionControl(OptionControl):
         self.setCurrentIndex(value)
 
 
+class AnyCompleter(QtWidgets.QCompleter):
+
+    def __init__(self, *args, **kwargs):
+        super(AnyCompleter, self).__init__(*args, **kwargs)
+        self.local_completion_prefix = ''
+        self.source_model = None
+
+    def setModel(self, model):
+        self.source_model = model
+        super(AnyCompleter, self).setModel(self.source_model)
+
+    def updateModel(self):
+        pattern = self.local_completion_prefix
+        class ProxyModel(QtCore.QSortFilterProxyModel):
+            def filterAcceptsRow(self, sourceRow, sourceParent):
+                i = self.sourceModel().index(sourceRow, 0, sourceParent)
+                data = self.sourceModel().data(i).lower()
+                return pattern in data
+        model = ProxyModel()
+        model.setSourceModel(self.source_model)
+        super(AnyCompleter, self).setModel(model)
+
+    def splitPath(self, path):
+        self.local_completion_prefix = path
+        self.updateModel()
+        return ''
+
+
+class EntryOptionControl(Control, QtWidgets.QComboBox):
+
+    changed = QtCore.Signal(object)
+
+    def __init__(self, name, root=None, tags=None, parent=None):
+        self.root = root
+        self.tags = tags
+        self.entries = self.query()
+        self.options = [self.format_entry(e) for e in self.entries]
+        super(EntryOptionControl, self).__init__(name, parent)
+
+    def query(self):
+        import fsfs
+        if self.root:
+            query = fsfs.search(self.root)
+            if self.tags:
+                query = query.tags(*self.tags)
+            return list(query)
+        return []
+
+    def format_entry(self, entry):
+        parents = list(entry.parents())[::-1]
+        if parents:
+            parts = parents[max(0, len(parents) - 3):] + [entry]
+            return '/'.join([p.name for p in parts])
+        else:
+            return entry.name
+
+    def create(self):
+
+        self.setEditable(True)
+        self.setInsertPolicy(self.NoInsert)
+        self.activated.connect(self.emit_changed)
+        self.addItems(self.options)
+
+        self.completer = AnyCompleter(self)
+        self.completer.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
+        self.completer.setModel(self.model())
+        self.setCompleter(self.completer)
+
+    def get(self):
+        index = self.currentIndex()
+        return self.entries[index]
+
+    def set(self, value):
+        try:
+            index = self.entires.index(value)
+            self.setCurrentIndex(index)
+        except IndexError:
+            raise ValueError('Could not find index of entry %s' % value)
+
+
 CONTROL_TYPES = [
     IntControl,
     Int2Control,
@@ -261,7 +348,8 @@ CONTROL_TYPES = [
     StringControl,
     BoolControl,
     StringOptionControl,
-    IntOptionControl
+    IntOptionControl,
+    EntryOptionControl
 ]
 
 
@@ -353,5 +441,24 @@ def show_controls():
     sys.exit(app.exec_())
 
 
+def show_entry_control():
+
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    win = QtWidgets.QWidget()
+    layout = QtWidgets.QFormLayout()
+
+    c = EntryOptionControl(
+        'Workspace',
+        root='Z:/Active_Projects/18-XXX-GOOGLE_ASSET_LIBRARY',
+        tags=['workspace', 'maya']
+    )
+    layout.addRow(c.name, c)
+
+    win.setLayout(layout)
+    win.show()
+    sys.exit(app.exec_())
+
+
 if __name__ == '__main__':
-    map_controls()
+    show_entry_control()
