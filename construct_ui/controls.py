@@ -271,11 +271,13 @@ class AnyCompleter(QtWidgets.QCompleter):
 
     def updateModel(self):
         pattern = self.local_completion_prefix
+
         class ProxyModel(QtCore.QSortFilterProxyModel):
             def filterAcceptsRow(self, sourceRow, sourceParent):
                 i = self.sourceModel().index(sourceRow, 0, sourceParent)
                 data = self.sourceModel().data(i).lower()
                 return pattern in data
+
         model = ProxyModel()
         model.setSourceModel(self.source_model)
         super(AnyCompleter, self).setModel(model)
