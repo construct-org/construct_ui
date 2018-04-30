@@ -8,4 +8,4 @@ class UIProvider(Extension):
 
     def load(self):
         self.add_form('file.open', FileOpenForm)
-        self.add_form('file.save', FileSaveForm)
+        # self.add_form('file.save', FileSaveForm)

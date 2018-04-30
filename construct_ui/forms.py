@@ -9,15 +9,24 @@ from construct_ui.views import View, WorkspaceFilesView
 
 class FileOpenForm(View, QtWidgets.QWidget):
 
+    accepted = channel('accepted')
+
     def will_set_data(self, old_data, data):
         self.root = data.root
         self.workspace = data.workspace
+        self.file = None
 
     def workspace_changed(self, control):
         ctx = Context.from_path(control.get().path)
         self.set_data(ctx)
 
+    def accept(self):
+        self.accepted.send(self)
+        print(self.files.get_file())
+
     def create(self):
+        self.open_button = QtWidgets.QPushButton('Open', self)
+        self.open_button.clicked.connect(self.accept)
         self.workspace_option = EntryOptionControl(
             'workspace',
             root=self.root,
@@ -29,14 +38,15 @@ class FileOpenForm(View, QtWidgets.QWidget):
             self.workspace_option.get(),
             parent=self
         )
-
+        self.files.doubleClicked.connect(self.accept)
         self.workspace_option.changed.connect(self.workspace_changed)
 
         self.grid = QtWidgets.QGridLayout()
         self.grid.setColumnStretch(2, 1)
         self.grid.addWidget(QtWidgets.QLabel(self.workspace_option.name), 0, 0)
         self.grid.addWidget(self.workspace_option, 0, 1)
-        self.grid.addWidget(self.files, 1, 0, 1, 3)
+        self.grid.addWidget(self.files, 1, 0, 1, 4)
+        self.grid.addWidget(self.open_button, 2, 3)
 
         self.setLayout(self.grid)
 

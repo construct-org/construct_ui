@@ -2,7 +2,7 @@
 from __future__ import absolute_import
 from Qt import QtWidgets, QtCore
 from abc import abstractmethod
-from construct_ui.utils import ABCNonMeta, is_implemented, not_implemented
+from construct_ui.utils import ABCNonMeta, not_implemented
 
 
 class View(ABCNonMeta):
@@ -55,6 +55,13 @@ class WorkspaceFilesView(View, QtWidgets.QTreeView):
 
     def update(self):
         if self.data:
+            extensions = self.data.config.get('extensions', [])
+            name_filters = ['*' + ext for ext in extensions]
             self.model.setRootPath("")
             self.model.setRootPath(self.data.path)
+            self.model.setNameFilters(name_filters)
+            self.model.setNameFilterDisables(False)
             self.setRootIndex(self.model.index(self.data.path))
+
+    def get_file(self):
+        return self.model.filePath(self.currentIndex())
