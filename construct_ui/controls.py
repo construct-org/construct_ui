@@ -5,14 +5,19 @@ Controls
 ========
 Wraps all standard control widgets providing a unified api.
 
-- Controls emit a **changed** signal when the controls value changes
+- Controls send a **changed** message when the controls value changes
 - `Control.get` gets the value of a control
 - `Control.set` sets the value of a control
 '''
 from Qt import QtWidgets, QtCore, QtGui
+from abc import abstractmethod
+from construct_ui.utils import ABCNonMeta, is_implemented, not_implemented
+from bands import channel
 
 
-class Control(object):
+class Control(ABCNonMeta):
+
+    changed = channel('changed')
 
     def __init__(self, name, parent=None):
         super(Control, self).__init__(parent=parent)
@@ -21,23 +26,24 @@ class Control(object):
         self.name = name
         self.create()
 
-    def emit_changed(self):
-        print(self.name, self.get())
-        self.changed.emit(self)
+    def send_changed(self):
+        self.changed.send(self)
 
+    @abstractmethod
     def create(self):
         return NotImplemented
 
+    @abstractmethod
     def get(self):
         return NotImplemented
 
+    @abstractmethod
     def set(self, value):
         return NotImplemented
 
 
 class SpinControl(Control, QtWidgets.QSpinBox):
 
-    changed = QtCore.Signal(object)
     default_range = (0, 99)
 
     def __init__(self, name, range=None, parent=None):
@@ -46,7 +52,7 @@ class SpinControl(Control, QtWidgets.QSpinBox):
 
     def create(self):
         self.set_range(self.range)
-        self.valueChanged.emit(self.emit_changed)
+        self.valueChanged.connect(self.send_changed)
 
     def get_range(self):
         return self.minimum(), self.maximum()
@@ -69,7 +75,6 @@ class IntControl(SpinControl):
 
 class FloatControl(Control, QtWidgets.QDoubleSpinBox):
 
-    changed = QtCore.Signal(object)
     default_range = (0, 99)
 
     def __init__(self, name, range=None, parent=None):
@@ -78,7 +83,7 @@ class FloatControl(Control, QtWidgets.QDoubleSpinBox):
 
     def create(self):
         self.set_range(self.range)
-        self.valueChanged.emit(self.emit_changed)
+        self.valueChanged.connect(self.send_changed)
 
     def get_range(self):
         return self.minimum(), self.maximum()
@@ -97,7 +102,6 @@ class FloatControl(Control, QtWidgets.QDoubleSpinBox):
 
 class MultiSpinControl(Control, QtWidgets.QWidget):
 
-    changed = QtCore.Signal(object)
     widget_cls = QtWidgets.QSpinBox
     default_range = (0, 99)
     num_controls = 2
@@ -118,7 +122,7 @@ class MultiSpinControl(Control, QtWidgets.QWidget):
         self.widgets = []
         for i in range(self.num_controls):
             box = self.widget_cls(parent=self.parent())
-            box.valueChanged.connect(self.emit_changed)
+            box.valueChanged.connect(self.send_changed)
             self.layout.addWidget(box)
             self.widgets.append(box)
 
@@ -179,13 +183,11 @@ class Float3Control(MultiSpinControl):
 
 class StringControl(Control, QtWidgets.QLineEdit):
 
-    changed = QtCore.Signal(object)
-
     def __init__(self, name, placeholder=None, parent=None):
         super(StringControl, self).__init__(name, parent)
 
     def create(self):
-        self.textEdited.connect(self.emit_changed)
+        self.textEdited.connect(self.send_changed)
 
     def get(self):
         return self.text()
@@ -196,13 +198,11 @@ class StringControl(Control, QtWidgets.QLineEdit):
 
 class BoolControl(Control, QtWidgets.QCheckBox):
 
-    changed = QtCore.Signal(object)
-
     def __init__(self, name, parent=None):
         super(BoolControl, self).__init__(name, parent)
 
     def create(self):
-        self.clicked.connect(self.emit_changed)
+        self.clicked.connect(self.send_changed)
 
     def get(self):
         return self.isChecked()
@@ -213,14 +213,12 @@ class BoolControl(Control, QtWidgets.QCheckBox):
 
 class OptionControl(Control, QtWidgets.QComboBox):
 
-    changed = QtCore.Signal(object)
-
     def __init__(self, name, options=None, parent=None):
         self.options = options
         super(OptionControl, self).__init__(name, parent)
 
     def create(self):
-        self.activated.connect(self.emit_changed)
+        self.activated.connect(self.send_changed)
         if self.options:
             self.set_options(self.options)
 
@@ -276,7 +274,17 @@ class AnyCompleter(QtWidgets.QCompleter):
             def filterAcceptsRow(self, sourceRow, sourceParent):
                 i = self.sourceModel().index(sourceRow, 0, sourceParent)
                 data = self.sourceModel().data(i).lower()
-                return pattern in data
+                data_parts = data.split('/')
+                pattern_parts = pattern.split('/')
+                while pattern_parts:
+                    part = pattern_parts.pop(0)
+                    for i, data_part in enumerate(data_parts):
+                        if part in data_part:
+                            data_parts = data_parts[i:]
+                            break
+                    else:
+                        return False
+                return True
 
         model = ProxyModel()
         model.setSourceModel(self.source_model)
@@ -289,8 +297,6 @@ class AnyCompleter(QtWidgets.QCompleter):
 
 
 class EntryOptionControl(Control, QtWidgets.QComboBox):
-
-    changed = QtCore.Signal(object)
 
     def __init__(self, name, root=None, tags=None, parent=None):
         self.root = root
@@ -320,12 +326,12 @@ class EntryOptionControl(Control, QtWidgets.QComboBox):
 
         self.setEditable(True)
         self.setInsertPolicy(self.NoInsert)
-        self.activated.connect(self.emit_changed)
+        self.activated.connect(self.send_changed)
         self.addItems(self.options)
 
         self.completer = AnyCompleter(self)
-        self.completer.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
         self.completer.setModel(self.model())
+        self.completer.activated.connect(self.send_changed)
         self.setCompleter(self.completer)
 
     def get(self):
@@ -334,10 +340,10 @@ class EntryOptionControl(Control, QtWidgets.QComboBox):
 
     def set(self, value):
         try:
-            index = self.entires.index(value)
+            index = self.entries.index(value)
             self.setCurrentIndex(index)
-        except IndexError:
-            raise ValueError('Could not find index of entry %s' % value)
+        except ValueError:
+            pass
 
 
 CONTROL_TYPES = [
@@ -351,7 +357,7 @@ CONTROL_TYPES = [
     BoolControl,
     StringOptionControl,
     IntOptionControl,
-    EntryOptionControl
+    EntryOptionControl,
 ]
 
 
@@ -386,81 +392,3 @@ def control_for_value(value):
             return CONTROL_MAP[(str,)]
         if key[0] is int:
             return CONTROL_MAP[(int,)]
-
-
-def map_controls():
-
-    data = {
-        'bool': True,
-        'int': 10,
-        'int2': [10, 20],
-        'int3': [10, 20, 30],
-        'float': 10,
-        'float2': [10, 20],
-        'float3': [10, 20, 30],
-        'string': 'hello world!',
-        'option': ['one', 'two', 'three', 'four']
-    }
-
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    win = QtWidgets.QWidget()
-    layout = QtWidgets.QFormLayout()
-    controls = []
-
-    for name, value in data.items():
-        control = control_for_value(value)
-        c = control(name, parent=win)
-        controls.append(c)
-        if isinstance(c, OptionControl):
-            c.set_options(value)
-        else:
-            c.set(value)
-        layout.addRow(c.name, c)
-
-    win.setLayout(layout)
-    win.show()
-    def closeEvent(event):
-        print({c.name: c.get() for c in controls})
-        event.accept()
-    win.closeEvent = closeEvent
-    sys.exit(app.exec_())
-
-
-def show_controls():
-
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    win = QtWidgets.QWidget()
-    layout = QtWidgets.QFormLayout()
-
-    for control in CONTROL_TYPES:
-        c = control(control.__name__, parent=win)
-        layout.addRow(c.name, c)
-
-    win.setLayout(layout)
-    win.show()
-    sys.exit(app.exec_())
-
-
-def show_entry_control():
-
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    win = QtWidgets.QWidget()
-    layout = QtWidgets.QFormLayout()
-
-    c = EntryOptionControl(
-        'Workspace',
-        root='Z:/Active_Projects/18-XXX-GOOGLE_ASSET_LIBRARY',
-        tags=['workspace', 'maya']
-    )
-    layout.addRow(c.name, c)
-
-    win.setLayout(layout)
-    win.show()
-    sys.exit(app.exec_())
-
-
-if __name__ == '__main__':
-    show_entry_control()

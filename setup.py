@@ -45,7 +45,7 @@ setup(
     ],
     packages=find_packages(),
     include_package_data=True,
-    install_requires=['Qt.py'],
+    install_requires=['Qt.py', 'bands'],
     setup_requires=['libsass >= 0.6.0'],
     sass_manifests={
         'construct_ui': ('resources/scss', 'resources/css')
