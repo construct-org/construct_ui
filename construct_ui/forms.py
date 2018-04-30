@@ -12,6 +12,7 @@ class FileOpenForm(View, QtWidgets.QWidget):
     accepted = channel('accepted')
 
     def will_set_data(self, old_data, data):
+        self.ctx = data
         self.root = data.root
         self.workspace = data.workspace
         self.file = None
@@ -25,21 +26,32 @@ class FileOpenForm(View, QtWidgets.QWidget):
         print(self.files.get_file())
 
     def create(self):
-        self.open_button = QtWidgets.QPushButton('Open', self)
-        self.open_button.clicked.connect(self.accept)
+
+        # Setup workspace control
+        if self.workspace:
+            tags = self.workspace.tags
+        else:
+            tags = ['workspace']
+
         self.workspace_option = EntryOptionControl(
             'workspace',
             root=self.root,
-            tags=['workspace', 'maya'],
+            tags=tags,
             parent=self
         )
         self.workspace_option.set(self.workspace)
+        self.workspace_option.changed.connect(self.workspace_changed)
+
+        # Setup files view
         self.files = WorkspaceFilesView(
             self.workspace_option.get(),
             parent=self
         )
         self.files.doubleClicked.connect(self.accept)
-        self.workspace_option.changed.connect(self.workspace_changed)
+
+        # Setup open button
+        self.open_button = QtWidgets.QPushButton('Open', self)
+        self.open_button.clicked.connect(self.accept)
 
         self.grid = QtWidgets.QGridLayout()
         self.grid.setColumnStretch(2, 1)
