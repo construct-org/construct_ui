@@ -5,6 +5,7 @@ from construct.utils import unipath
 
 
 this_folder = unipath(os.path.dirname(__file__))
+STYLES = {}
 
 
 def styles():
@@ -15,16 +16,27 @@ def styles():
     for f in os.listdir(root):
         path = unipath(root, f)
         if os.path.isfile(path):
-            name = os.path.splitext(f)[0]
-            data[name] = path
+            name = f.split('.')[0]
+            if name not in STYLES:
+                with open(path, 'r') as f:
+                    data[name] = {'style': f.read(), 'path': path}
     return data
 
 
 def style(name):
-    '''Get the fullpath of a stylesheet by name'''
+    '''Get a stylesheet by name'''
 
     try:
-        return styles()[name]
+        return styles()[name]['style']
+    except KeyError:
+        raise KeyError('Could not find style: %s' % name)
+
+
+def style_path(name):
+    '''Get the fullpath to a stylesheet by name'''
+
+    try:
+        return styles()[name]['path']
     except KeyError:
         raise KeyError('Could not find style: %s' % name)
 
@@ -37,7 +49,7 @@ def icons():
     for f in os.listdir(root):
         path = unipath(root, f)
         if os.path.isfile(path):
-            name = os.path.splitext(f)[0]
+            name = f.split('.')[0]
             data[name] = path
     return data
 

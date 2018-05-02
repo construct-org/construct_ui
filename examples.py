@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from Qt import QtWidgets, QtCore, QtGui
-from construct_ui import controls, forms
+from construct_ui import controls, forms, resources
 
 
 def on_accepted(form):
@@ -11,8 +11,14 @@ def on_accepted(form):
 def show_file_open_form():
 
     import sys
+    from live import LiveStyle
+    style = resources.style('dark')
+    style_path = resources.style_path('dark')
+
     app = QtWidgets.QApplication(sys.argv)
     form = forms.FileOpenForm(construct.get_context())
+    form.setStyleSheet(style)
+    LiveStyle(style_path, form)
     form.show()
     sys.exit(app.exec_())
 

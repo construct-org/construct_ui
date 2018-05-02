@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from Qt import QtWidgets
+from Qt import QtWidgets, QtCore
 from bands import channel
 from construct import Context
 from construct_ui.controls import EntryOptionControl
@@ -26,6 +26,9 @@ class FileOpenForm(View, QtWidgets.QWidget):
         print(self.files.get_file())
 
     def create(self):
+
+        # Make sure this fucker gets styled
+        self.setAttribute(QtCore.Qt.WA_StyledBackground)
 
         # Setup workspace control
         if self.workspace:
@@ -54,6 +57,7 @@ class FileOpenForm(View, QtWidgets.QWidget):
         self.open_button.clicked.connect(self.accept)
 
         self.grid = QtWidgets.QGridLayout()
+        self.grid.setContentsMargins(20, 20, 20, 20)
         self.grid.setColumnStretch(2, 1)
         self.grid.addWidget(QtWidgets.QLabel(self.workspace_option.name), 0, 0)
         self.grid.addWidget(self.workspace_option, 0, 1)

@@ -222,6 +222,9 @@ class OptionControl(Control, QtWidgets.QComboBox):
         if self.options:
             self.set_options(self.options)
 
+        # Allow items to be styled
+        self.setItemDelegate(QtWidgets.QStyledItemDelegate())
+
     def get_options(self, options):
         return self.options
 
