@@ -19,12 +19,14 @@ class Control(ABCNonMeta):
 
     changed = channel('changed')
 
-    def __init__(self, name, parent=None):
+    def __init__(self, name, default=None, parent=None):
         super(Control, self).__init__(parent=parent)
 
         self.setObjectName(name)
         self.name = name
         self.create()
+        if default is not None:
+            self.set(default)
 
     def send_changed(self):
         self.changed.send(self)
@@ -46,9 +48,9 @@ class SpinControl(Control, QtWidgets.QSpinBox):
 
     default_range = (0, 99)
 
-    def __init__(self, name, range=None, parent=None):
+    def __init__(self, name, range=None, default=None, parent=None):
         self.range = range or self.default_range
-        super(SpinControl, self).__init__(name, parent)
+        super(SpinControl, self).__init__(name, default, parent)
 
     def create(self):
         self.set_range(self.range)
@@ -77,9 +79,9 @@ class FloatControl(Control, QtWidgets.QDoubleSpinBox):
 
     default_range = (0, 99)
 
-    def __init__(self, name, range=None, parent=None):
+    def __init__(self, name, range=None, default=None, parent=None):
         self.range = range or self.default_range
-        super(FloatControl, self).__init__(name, parent)
+        super(FloatControl, self).__init__(name, default, parent)
 
     def create(self):
         self.set_range(self.range)
@@ -106,7 +108,7 @@ class MultiSpinControl(Control, QtWidgets.QWidget):
     default_range = (0, 99)
     num_controls = 2
 
-    def __init__(self, name, ranges=None, parent=None):
+    def __init__(self, name, ranges=None, default=None, parent=None):
         self.ranges = ranges or [
             self.default_range for i in range(self.num_controls)
         ]
@@ -183,8 +185,8 @@ class Float3Control(MultiSpinControl):
 
 class StringControl(Control, QtWidgets.QLineEdit):
 
-    def __init__(self, name, placeholder=None, parent=None):
-        super(StringControl, self).__init__(name, parent)
+    def __init__(self, name, placeholder=None, default=None, parent=None):
+        super(StringControl, self).__init__(name, default, parent)
 
     def create(self):
         self.textEdited.connect(self.send_changed)
@@ -198,8 +200,8 @@ class StringControl(Control, QtWidgets.QLineEdit):
 
 class BoolControl(Control, QtWidgets.QCheckBox):
 
-    def __init__(self, name, parent=None):
-        super(BoolControl, self).__init__(name, parent)
+    def __init__(self, name, default=None, parent=None):
+        super(BoolControl, self).__init__(name, default, parent)
 
     def create(self):
         self.clicked.connect(self.send_changed)
@@ -213,9 +215,9 @@ class BoolControl(Control, QtWidgets.QCheckBox):
 
 class OptionControl(Control, QtWidgets.QComboBox):
 
-    def __init__(self, name, options=None, parent=None):
+    def __init__(self, name, options=None, default=None, parent=None):
         self.options = options
-        super(OptionControl, self).__init__(name, parent)
+        super(OptionControl, self).__init__(name, default, parent)
 
     def create(self):
         self.activated.connect(self.send_changed)
@@ -265,6 +267,10 @@ class AnyCompleter(QtWidgets.QCompleter):
         super(AnyCompleter, self).__init__(*args, **kwargs)
         self.local_completion_prefix = ''
         self.source_model = None
+        self.styled_delegate = QtWidgets.QStyledItemDelegate(self)
+        view = self.popup()
+        view.setItemDelegate(self.styled_delegate)
+        view.setObjectName('completer')
 
     def setModel(self, model):
         self.source_model = model
@@ -289,9 +295,9 @@ class AnyCompleter(QtWidgets.QCompleter):
                         return False
                 return True
 
-        model = ProxyModel()
-        model.setSourceModel(self.source_model)
-        super(AnyCompleter, self).setModel(model)
+        self.proxy_model = ProxyModel(self)
+        self.proxy_model.setSourceModel(self.source_model)
+        super(AnyCompleter, self).setModel(self.proxy_model)
 
     def splitPath(self, path):
         self.local_completion_prefix = path
@@ -299,34 +305,50 @@ class AnyCompleter(QtWidgets.QCompleter):
         return ''
 
 
-class EntryOptionControl(Control, QtWidgets.QComboBox):
+class QueryOptionControl(Control, QtWidgets.QComboBox):
 
-    def __init__(self, name, root=None, tags=None, parent=None):
-        self.root = root
-        self.tags = tags
-        self.entries = self.query()
-        self.options = [self.format_entry(e) for e in self.entries]
-        super(EntryOptionControl, self).__init__(name, parent)
+    on_query_result = QtCore.Signal(object)
 
-    def query(self):
-        import fsfs
-        if self.root:
-            query = fsfs.search(self.root)
-            if self.tags:
-                query = query.tags(*self.tags)
-            return list(query)
-        return []
+    def __init__(self, name, query, formatter, default=None, parent=None):
+        self.query = query
+        self.formatter = formatter
+        self.models = []
+        if default and default not in self.models:
+            self.models.append(default)
+        self.options = [formatter(e) for e in self.models]
+        super(QueryOptionControl, self).__init__(name, default, parent)
 
-    def format_entry(self, entry):
-        parents = list(entry.parents())[::-1]
-        if parents:
-            parts = parents[max(0, len(parents) - 3):] + [entry]
-            return '/'.join([p.name for p in parts])
-        else:
-            return entry.name
+    def fetch(self):
+        '''Perform the query in a background thread, adding options as we go'''
+
+        def perform_query(control, query):
+            for entry in query:
+                try:
+                    control.on_query_result.emit(entry)
+                except RuntimeError as e:
+                    if 'deleted.' in str(e):
+                        return
+                    raise
+
+        from threading import Thread
+        query = Thread(target=perform_query, args=(self, self.query))
+        query.start()
+
+    def set_query(self, query):
+        self.models = []
+        self.options = []
+        self.clear()
+        self.query = query
+        self.fetch()
+
+    def add_model(self, model):
+        if model not in self.models:
+            self.models.append(model)
+            item = self.formatter(model)
+            self.options.append(item)
+            self.addItem(item)
 
     def create(self):
-
         self.setEditable(True)
         self.setInsertPolicy(self.NoInsert)
         self.activated.connect(self.send_changed)
@@ -337,13 +359,21 @@ class EntryOptionControl(Control, QtWidgets.QComboBox):
         self.completer.activated.connect(self.send_changed)
         self.setCompleter(self.completer)
 
+        # Allow items to be styled
+        self.styled_delegate = QtWidgets.QStyledItemDelegate(self)
+        self.setItemDelegate(self.styled_delegate)
+
+        # Run query thread
+        self.on_query_result.connect(self.add_model)
+        self.fetch()
+
     def get(self):
         index = self.currentIndex()
-        return self.entries[index]
+        return self.models[index]
 
     def set(self, value):
         try:
-            index = self.entries.index(value)
+            index = self.models.index(value)
             self.setCurrentIndex(index)
         except ValueError:
             pass
@@ -360,7 +390,7 @@ CONTROL_TYPES = [
     BoolControl,
     StringOptionControl,
     IntOptionControl,
-    EntryOptionControl,
+    QueryOptionControl,
 ]
 
 

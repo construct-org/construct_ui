@@ -1,20 +1,22 @@
 // Fonts
 $font-stack: Helvetica, sans-serif !default;
 $font-size: 12pt !default;
-$font-weight: 500;
+$font-weight: normal;
 
 // Colors
-$transparent: rgba(0, 0, 0, 0);
+$transparent: rgba(255, 255, 255, 0);
 $background-color: #333 !default;
 $primary-color: #fff !default;
 $focus-color: #fff * 0.3 !default;
 $pressed-color: #fff * 0.35 !default;
 $disabled-color: #fff * 0.45 !default;
+$error-color: rgb(203, 40, 40) !default;
 
 // Borders
 $border-radius: 2px !default;
 $text-padding: 8px !default;
 
+// Base
 
 QWidget {
     font: 100% $font-stack;
@@ -22,8 +24,28 @@ QWidget {
     font-weight: $font-weight;
     background: $background-color;
     color: $primary-color;
+    selection-background-color: $background-color;
+    selection-color: $primary-color;
 }
 
+
+// QLineEdit
+
+QLineEdit{
+    background: $focus-color;
+    border-radius: $border-radius;
+    border: 0;
+    color: $primary-color;
+    padding-top: $text-padding;
+    padding-bottom: $text-padding;
+    padding-left: $text-padding * 2;
+    padding-right: $text-padding * 2;
+}
+
+QLineEdit[valid='false']{
+    border: 1px solid $error-color;
+    color: $error-color;
+}
 
 // Buttons
 
@@ -32,6 +54,7 @@ QPushButton {
     padding: $text-padding;
     color: $primary-color;
     background: $transparent;
+    outline: none;
 }
 
 QPushButton:hover, QPushButton:focus {
@@ -56,25 +79,42 @@ QComboBox {
     font: 10pt "Arial";
     outline: none;
     padding: $text-padding;
+    padding-left: $text-padding * 2;
+    padding-right: $text-padding * 2;
 }
 
 QComboBox[valid='false'] {
-    border: 1px solid rgb(203, 40, 40);
+    color: $error-color;
 }
 
-QComboBox::drop-down{
-    background: rgba(255, 255, 255, 0);
-    border-bottom: 0px solid rgba(235,235,235, 0);
-    border-left: 5px solid rgba(255,255,255,0);
-    border-right: 5px solid rgba(255,255,255,0);
-    border-top: 5px solid rgb(185,185,185);
-    margin-bottom: -1px;
-    margin-left: 3px;
+QComboBox::drop-down {
+    background: $transparent;
+    border: 0;
+    margin-bottom: 4px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 4px;
+    width: 24px;
+}
+
+QComboBox::drop-down:editable {
+    border-left: 1px solid $background-color;
+}
+
+QComboBox::down-arrow{
+    background: $transparent;
+    border-top: 5px solid $primary-color;
+    border-left: 5px solid $transparent;
+    border-right: 5px solid $transparent;
+    border-bottom: 0px solid $transparent;
+    margin-left: 0px;
     margin-right: 3px;
-    margin-top: 12px;
+    margin-top: 4px;
 }
 
-QComboBox QAbstractItemView{
+QComboBox QAbstractItemView,
+QAbstractItemView#completer{
+    // show-decoration-selected: 1;
     background: $focus-color;
     border: none;
     color: $primary-color;
@@ -83,57 +123,41 @@ QComboBox QAbstractItemView{
     selection-color: $primary-color;
 }
 
-QComboBox QAbstractItemView::item{
-    padding: $text-padding;
+QComboBox QAbstractItemView::item,
+QAbstractItemView#completer::item{
+    border: 0;
+    color: 0;
+    outline: none;
+    padding-top: $text-padding;
+    padding-bottom: $text-padding;
+    padding-left: $text-padding * 2;
+    padding-right: $text-padding * 2;
 }
 
-
-QTreeView {
-    show-decoration-selected: 1;
+QComboBox QAbstractItemView::item:selected:active,
+QComboBox QAbstractItemView::item:hover,
+QAbstractItemView#completer::item:selected:active,
+QAbstractItemView#completer::item:hover{
+    background: $pressed-color;
 }
-
-QTreeView::item {
-    border: 1px solid #d9d9d9;
-    border-top-color: transparent;
-    border-bottom-color: transparent;
-}
-
-QTreeView::item:hover {
-    background: $focus-color;
-    border: 1px solid #bfcde4;
-}
-
-QTreeView::item:selected {
-    border: 1px solid #567dbc;
-}
-
-QTreeView::item:selected:active {
-    background: $focus-color;
-}
-
-QTreeView::item:selected:!active {
-    background: $focs-color;
-}
-
 
 // Scrollbars
 
-
 QScrollBar:vertical {
     border: 0;
-    background: rgb(255, 255, 255);
+    background: $focus-color;
     width: 16px;
     padding: 4px;
     margin: 8px 0px 8px 0px;
 }
 QScrollBar::handle:vertical {
-    background: rgb(185, 185, 185);
-    border: 0px solid rgb(255, 255, 255);
+    background: $primary_color;
+    border: 0px solid $focus_color;
     min-height: 20px;
 }
 QScrollBar::add-line:vertical {
-    border: 0px solid rgb(185, 185, 185);
-    background: rgb(255, 255, 255);
+    border: 0px solid $primary_color;
+    background: $focus_color;
     height: 10;
     subcontrol-position: bottom;
     subcontrol-origin: margin;
@@ -141,99 +165,124 @@ QScrollBar::add-line:vertical {
 
 QScrollBar::sub-line:vertical {
      border: 0;
-     background: rgb(255, 255, 255);
+     background: $focus-color;
      height: 10;
      subcontrol-position: top;
      subcontrol-origin: margin;
 }
-QScrollBar::up-arrow:vertical{
-    background: rgba(255, 255, 255, 0);
-    border-bottom: 5px solid rgb(185,185,185);
-    border-left: 5px solid rgba(255,255,255,0);
-    border-right: 5px solid rgba(255,255,255,0);
-    border-top: 0px solid rgba(235,235,235, 0);
-    margin-bottom: 2px;
-    margin-left: 3px;
-    margin-right: 3px;
-    margin-top: -2px;
-    subcontrol-origin: border;
-    subcontrol-position: top right;
-}
+QScrollBar::up-arrow:vertical {}
 
-QScrollBar::down-arrow:vertical {
-    background: rgba(255, 255, 255, 0);
-    border-bottom: 0px solid rgba(235,235,235, 0);
-    border-left: 5px solid rgba(255,255,255,0);
-    border-right: 5px solid rgba(255,255,255,0);
-    border-top: 5px solid rgb(185,185,185);
-    margin-bottom: -2px;
-    margin-left: 3px;
-    margin-right: 3px;
-    margin-top: 2px;
-    subcontrol-origin: border;
-    subcontrol-position: bottom right;
-}
+QScrollBar::down-arrow:vertical {}
 
 QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
     background: none;
 }
 
-
 QScrollBar:horizontal {
     border: 0;
-    background: rgb(255, 255, 255);
-    width: 16px;
+    background: $focus-color;
+    height: 16px;
     padding: 4px;
-    margin: 0px 22px 0px 22px;
+    margin: 0px 8px 0px 8px;
 }
 QScrollBar::handle:horizontal {
-    background: rgb(185, 185, 185);
-    border: 0px solid rgb(255, 255, 255);
+    background: $primary_color;
+    border: 0px solid $focus_color;
     min-width: 20px;
 }
 QScrollBar::add-line:horizontal {
-    border: 0px solid rgb(185, 185, 185);
-    background: rgb(255, 255, 255);
+    border: 0px solid $primary_color;
+    background: $focus_color;
     width: 10;
-    subcontrol-position: left;
+    subcontrol-position: right;
     subcontrol-origin: margin;
 }
 
 QScrollBar::sub-line:horizontal {
      border: 0;
-     background: rgb(255, 255, 255);
+     background: $focus-color;
      width: 10;
-     subcontrol-position: right;
+     subcontrol-position: left;
      subcontrol-origin: margin;
 }
-QScrollBar::left-arrow:horizontal{
-    background: rgba(255, 255, 255, 0);
-    border-right: 5px solid rgb(185,185,185);
-    border-left: 5px solid rgba(255,255,255,0);
-    border-bottom: 5px solid rgba(255,255,255,0);
-    border-top: 0px solid rgba(235,235,235, 0);
-    margin-right: 2px;
-    margin-left: 3px;
-    margin-bottom: 3px;
-    margin-top: -2px;
-    subcontrol-origin: border;
-    subcontrol-position: bottom left;
-}
+QScrollBar::left-arrow:horizontal {}
 
-QScrollBar::right-arrow:horizontal {
-    background: rgba(255, 255, 255, 0);
-    border-left: 0px solid rgba(235,235,235, 0);
-    border-bottom: 5px solid rgba(255,255,255,0);
-    border-right: 5px solid rgba(255,255,255,0);
-    border-top: 5px solid rgb(185,185,185);
-    margin-left: -2px;
-    margin-bottom: 3px;
-    margin-right: 3px;
-    margin-top: 2px;
-    subcontrol-origin: border;
-    subcontrol-position: bottom right;
-}
+QScrollBar::right-arrow:horizontal {}
 
 QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
     background: none;
+}
+
+
+// Tree View
+
+QTreeView {
+    show-decoration-selected: 1;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    outline: none;
+    border: 1px solid $focus-color;
+}
+
+QTreeView::item, QTreeView::branch{
+    border: 0;
+    border-bottom: 1px solid $focus-color;
+    padding: $text-padding;
+}
+
+QTreeView::item:hover, QTreeView::branch:hover{
+    border: 0;
+    background: $focus-color;
+}
+
+QTreeView::item:selected, QTreeView::branch:selected{
+    border: 0;
+}
+
+QTreeView::item:selected:active, QTreeView::branch:selected:active{
+    background: $pressed-color;
+}
+
+QTreeView::item:selected:!active, QTreeView::branch:selected:!active {
+    background: $pressed-color;
+    color: $primary-color;
+}
+
+QHeaderView::section {
+    background-color: $background-color;
+    color: $primary-color;
+    padding: $text-padding;
+    border: 0;
+    border-bottom: 1px solid $focus-color;
+}
+
+QHeaderView::down-arrow {
+    subcontrol-origin: margin;
+    subcontrol-position: right top;
+    background: $transparent;
+    border-top: 5px solid $primary-color;
+    border-left: 5px solid $transparent;
+    border-right: 5px solid $transparent;
+    border-bottom: 0px solid $transparent;
+    margin-bottom: 0px;
+    margin-left: 2px;
+    margin-right: 2px;
+    margin-top: 0px;
+    right: 16px;
+    top: 16px;
+}
+
+QHeaderView::up-arrow {
+    subcontrol-origin: margin;
+    subcontrol-position: right top;
+    background: $transparent;
+    border-top: 0px solid $transparent;
+    border-left: 5px solid $transparent;
+    border-right: 5px solid $transparent;
+    border-bottom: 5px solid $primary-color;
+    margin-bottom: 32px;
+    margin-left: 2px;
+    margin-right: 2px;
+    margin-top: 0px;
 }

@@ -10,4 +10,4 @@ __license__ = 'MIT'
 __url__ = 'https://github.com/construct-org/construct_ui'
 
 
-from construct_ui.menus import ActionMenu
+from construct_ui.extensions import ActionUIProvider

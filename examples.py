@@ -1,25 +1,36 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
+import sys
+
 from Qt import QtWidgets, QtCore, QtGui
+
+import construct
 from construct_ui import controls, forms, resources
 
 
-def on_accepted(form):
-    print(form.get_data())
+def apply_style(widget, style_name):
+    from live import LiveStyle
+    style = resources.style(style_name)
+    style_path = resources.style_path(style_name)
+    LiveStyle(style_path, widget)
+    widget.setStyleSheet(style)
 
 
 def show_file_open_form():
 
-    import sys
-    from live import LiveStyle
-    style = resources.style('dark')
-    style_path = resources.style_path('dark')
+    # configure construct
+    WORK = 'Z:/Active_Projects/18-032-GOOGLE_2018_PRINT/production/sequences/gale/gale_hero_secondary/light/work/maya'
+    construct.init()
+    construct.set_context_from_path(WORK)
+    action = construct.actions.get('file.open')
 
+    # show form
     app = QtWidgets.QApplication(sys.argv)
-    form = forms.FileOpenForm(construct.get_context())
-    form.setStyleSheet(style)
-    LiveStyle(style_path, form)
+    apply_style(app, 'dark')
+
+    form = forms.FileOpenForm(action)
     form.show()
+
     sys.exit(app.exec_())
 
 
@@ -37,8 +48,4 @@ if __name__ == '__main__':
 
     bands.get_band().dispatcher = LoggingDispatcher('bands')
 
-    WORK = 'Z:/Active_Projects/18-032-GOOGLE_2018_PRINT/production/sequences/gale/gale_hero_secondary/light/work/maya'
-    import construct
-    construct.init()
-    construct.set_context_from_path(WORK)
     show_file_open_form()
