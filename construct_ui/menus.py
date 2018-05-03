@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 import construct
 from construct.action import group_actions
+from construct_ui import resources
 from Qt import QtWidgets
 
 
@@ -40,9 +41,21 @@ def create_action_menu(groups=None, parent=None):
 def create_action_menu_item(action, parent):
     '''Creates a QAction from a Construct Action'''
 
-    def run_action():
-        action().run()
+    def menu_action():
+        '''
+        Attempts to create a form for the menu item's Action.
+        If no form is available, just run the action.
+        '''
+        host = construct.get_host()
+        parent = host.get_qt_parent()
+        form_cls = construct.get_form(action.identifier)
+        if form_cls:
+            form = form_cls(action, construct.get_context(), parent)
+            form.setStyleSheet(resources.style('dark'))
+            form.show()
+        else:
+            action().run()
 
     qaction = QtWidgets.QAction(action.label, parent)
-    qaction.triggered.connect(run_action)
+    qaction.triggered.connect(menu_action)
     return qaction

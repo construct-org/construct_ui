@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from Qt import QtWidgets, QtCore
+from Qt import QtWidgets, QtCore, QtCompat
 from abc import abstractmethod
 from construct_ui.utils import ABCNonMeta, not_implemented
 
@@ -48,7 +48,10 @@ class WorkspaceFilesView(View, QtWidgets.QTreeView):
 
     def create(self):
         self.setSortingEnabled(True)
-        self.header().setResizeMode(self.header().ResizeToContents)
+        QtCompat.setSectionResizeMode(
+            self.header(),
+            QtWidgets.QHeaderView.ResizeToContents
+        )
         self.model = QtWidgets.QFileSystemModel(self)
         self.model.setFilter(QtCore.QDir.Files)
         self.setModel(self.model)
