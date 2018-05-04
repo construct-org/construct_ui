@@ -25,6 +25,8 @@ class ActionForm(View):
 
         self.accepted.connect(self.on_accept)
         self.rejected.connect(self.on_reject)
+        if hasattr(self, 'setWindowTitle'):
+            self.setWindowTitle(action.label)
 
     def on_accept(self):
         action_args = self.get_args()

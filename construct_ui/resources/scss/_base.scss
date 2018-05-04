@@ -55,6 +55,7 @@ QPushButton {
     color: $primary-color;
     background: $transparent;
     outline: none;
+    min-width: 180px;
 }
 
 QPushButton:hover, QPushButton:focus {
@@ -112,8 +113,12 @@ QComboBox::down-arrow{
     margin-top: 4px;
 }
 
+QAbstractItemView[completer='true']{
+    background: blue;
+}
+
 QComboBox QAbstractItemView,
-QAbstractItemView#completer{
+QAbstractItemView[completer='true']{
     // show-decoration-selected: 1;
     background: $focus-color;
     border: none;
@@ -124,7 +129,7 @@ QAbstractItemView#completer{
 }
 
 QComboBox QAbstractItemView::item,
-QAbstractItemView#completer::item{
+QAbstractItemView[completer='true']::item{
     border: 0;
     color: 0;
     outline: none;
@@ -136,8 +141,8 @@ QAbstractItemView#completer::item{
 
 QComboBox QAbstractItemView::item:selected:active,
 QComboBox QAbstractItemView::item:hover,
-QAbstractItemView#completer::item:selected:active,
-QAbstractItemView#completer::item:hover{
+QAbstractItemView[completer='true']::item:selected:active,
+QAbstractItemView[completer='true']::item:hover{
     background: $pressed-color;
 }
 

@@ -266,15 +266,17 @@ class AnyCompleter(QtWidgets.QCompleter):
     def __init__(self, *args, **kwargs):
         super(AnyCompleter, self).__init__(*args, **kwargs)
         self.local_completion_prefix = ''
-        self.source_model = None
-        self.styled_delegate = QtWidgets.QStyledItemDelegate(self)
+        self.set_delegate()
+
+    def set_delegate(self):
+        from construct_ui import resources
         view = self.popup()
-        view.setItemDelegate(self.styled_delegate)
-        view.setObjectName('completer')
+        view.setItemDelegate(QtWidgets.QStyledItemDelegate(view))
+        view.setProperty('completer', True)
 
     def setModel(self, model):
-        self.source_model = model
-        super(AnyCompleter, self).setModel(self.source_model)
+        super(AnyCompleter, self).setModel(model)
+        self.set_delegate()
 
     def updateModel(self):
         pattern = self.local_completion_prefix
@@ -296,7 +298,7 @@ class AnyCompleter(QtWidgets.QCompleter):
                 return True
 
         self.proxy_model = ProxyModel(self)
-        self.proxy_model.setSourceModel(self.source_model)
+        self.proxy_model.setSourceModel(self.parent().model())
         super(AnyCompleter, self).setModel(self.proxy_model)
 
     def splitPath(self, path):
@@ -354,13 +356,19 @@ class QueryOptionControl(Control, QtWidgets.QComboBox):
         self.activated.connect(self.send_changed)
         self.addItems(self.options)
 
+        def after_completed(text):
+            if text in self.options:
+                index = self.options.index(text)
+                self.setCurrentIndex(index)
+                self.send_changed()
+
         self.completer = AnyCompleter(self)
         self.completer.setModel(self.model())
-        self.completer.activated.connect(self.send_changed)
+        self.completer.activated.connect(after_completed)
         self.setCompleter(self.completer)
 
         # Allow items to be styled
-        self.styled_delegate = QtWidgets.QStyledItemDelegate(self)
+        self.styled_delegate = QtWidgets.QStyledItemDelegate(self.completer)
         self.setItemDelegate(self.styled_delegate)
 
         # Run query thread

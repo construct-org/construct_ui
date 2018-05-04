@@ -26,7 +26,8 @@ QPushButton {
   padding: 8px;
   color: #000;
   background: rgba(255, 255, 255, 0%);
-  outline: none; }
+  outline: none;
+  min-width: 180px; }
 
 QPushButton:hover, QPushButton:focus {
   background: #e6e6e6; }
@@ -72,8 +73,11 @@ QComboBox::down-arrow {
   margin-right: 3px;
   margin-top: 4px; }
 
+QAbstractItemView[completer='true'] {
+  background: blue; }
+
 QComboBox QAbstractItemView,
-QAbstractItemView#completer {
+QAbstractItemView[completer='true'] {
   background: #e6e6e6;
   border: none;
   color: #000;
@@ -82,7 +86,7 @@ QAbstractItemView#completer {
   selection-color: #000; }
 
 QComboBox QAbstractItemView::item,
-QAbstractItemView#completer::item {
+QAbstractItemView[completer='true']::item {
   border: 0;
   color: 0;
   outline: none;
@@ -93,8 +97,8 @@ QAbstractItemView#completer::item {
 
 QComboBox QAbstractItemView::item:selected:active,
 QComboBox QAbstractItemView::item:hover,
-QAbstractItemView#completer::item:selected:active,
-QAbstractItemView#completer::item:hover {
+QAbstractItemView[completer='true']::item:selected:active,
+QAbstractItemView[completer='true']::item:hover {
   background: #d9d9d9; }
 
 QScrollBar:vertical {
