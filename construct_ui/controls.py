@@ -269,7 +269,6 @@ class AnyCompleter(QtWidgets.QCompleter):
         self.set_delegate()
 
     def set_delegate(self):
-        from construct_ui import resources
         view = self.popup()
         view.setItemDelegate(QtWidgets.QStyledItemDelegate(view))
         view.setProperty('completer', True)
