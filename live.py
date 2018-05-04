@@ -1,9 +1,5 @@
-'''
-pslive
-======
-Live CSS Reloading for PySide.
-This is pretty useful. You might want to use it too!
-'''
+# -*- coding: utf-8 -*-
+'''Live CSS Reloading for PySide'''
 
 from Qt import QtCore
 from collections import defaultdict
@@ -12,12 +8,12 @@ from collections import defaultdict
 class LiveStyle(QtCore.QFileSystemWatcher):
     '''Updates a widgets style when its css changes.
 
-    Simple usage case::
+    Simple usage:
 
         w = QtGui.QWidget()
         LiveStyle(path='path/to/style.css', parent=w)
 
-    Multiple widgets and stylesheets::
+    Multiple widgets and stylesheets:
 
         w = QtGui.QMainWindow()
         d = QtGui.QDialog(parent=w)
@@ -40,11 +36,11 @@ class LiveStyle(QtCore.QFileSystemWatcher):
         return '<{}>(parent={})'.format(self.__class__.__name__, self.parent())
 
     def link(self, widget, path):
-        '''Links a widget to a stylesheet path. Updating the widgets stylesheet
-        when changes occur to the path.
+        '''Links a widget to a stylesheet path.
 
-        :param widget: QtGui.QWidget instance
-        :param path: Filepath to stylesheet
+        Arguments:
+            widget: QtGui.QWidget instance
+            path: Filepath to stylesheet
         '''
 
         self.path_mapping[path].add(widget)
@@ -53,8 +49,9 @@ class LiveStyle(QtCore.QFileSystemWatcher):
     def unlink(self, widget, path):
         '''Unlinks a widget from a stylesheet path.
 
-        :param widget: QtGui.QWidget instance
-        :param path: Filepath to stylesheet
+        Arguments:
+            widget: QtGui.QWidget instance
+            path: Filepath to stylesheet
         '''
 
         if not self.path_mapping[path]:

@@ -19,9 +19,9 @@ def apply_style(widget, style_name):
 def show_file_open_form():
 
     # configure construct
-    WORK = 'Z:/Active_Projects/18-032-GOOGLE_2018_PRINT/production/sequences/gale/gale_hero_secondary/light/work/maya'
     construct.init()
-    construct.set_context_from_path(WORK)
+    workspace = construct.search(tags=['workspace']).one()
+    construct.set_context_from_entry(workspace)
     action = construct.actions.get('file.open')
 
     # show form

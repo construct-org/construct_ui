@@ -21,7 +21,7 @@ def build_scss_cmds(watch=False):
 
 @task
 def build(ctx, watch=False):
-
+    '''Build resources - scss'''
     import subprocess
     procs = [
         subprocess.Popen(cmd.split(), cwd=scss_src)
