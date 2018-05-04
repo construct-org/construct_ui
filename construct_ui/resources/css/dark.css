@@ -27,7 +27,7 @@ QPushButton {
   color: #fff;
   background: rgba(255, 255, 255, 0%);
   outline: none;
-  min-width: 180px; }
+  min-width: 120px; }
 
 QPushButton:hover, QPushButton:focus {
   background: #4d4d4d; }
