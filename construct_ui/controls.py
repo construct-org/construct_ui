@@ -334,6 +334,7 @@ class QueryOptionControl(Control, QtWidgets.QComboBox):
 
         from threading import Thread
         query = Thread(target=perform_query, args=(self, self.query))
+        query.daemon = True
         query.start()
 
     def set_query(self, query):

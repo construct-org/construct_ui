@@ -27,6 +27,9 @@ class ActionForm(View):
         self.rejected.connect(self.on_reject)
         if hasattr(self, 'setWindowTitle'):
             self.setWindowTitle(action.label)
+            self.setWindowFlags(
+                self.windowFlags() | QtCore.Qt.WindowStaysOnTopHint
+            )
 
     def on_accept(self):
         action_args = self.get_args()
