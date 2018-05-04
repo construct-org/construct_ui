@@ -14,9 +14,10 @@ class ActionForm(View):
     The data of an ActionForm is either the current construct Context or a
     Context object passed to ActionForm. Subclasses must implement get_kwargs
     returning the keyword arguments to pass their Actions. Subclasses may
-    override get_context to customize the context in which their Action will run. Subclasses may override on_accept to customize how their Action is run once the form is accepted.
+    override get_context to customize the context in which their Action will
+    run. Subclasses may override on_accept to customize how their Action is
+    run once the form is accepted.
     '''
-
 
     def __init__(self, action, ctx=None, *args, **kwargs):
         self.action = action

@@ -10,7 +10,7 @@ Build Sass
 
 .. code-block:: console
 
-    python setup.py build_sass
+    invoke build
 
 
 Installation
