@@ -88,7 +88,7 @@ class FileOpenForm(ActionForm, QtWidgets.QDialog):
         else:
             tags = ['workspace']
 
-        query = construct.search(root=self.data.root, tags=tags)
+        query = construct.search(root=self.data.project.path, tags=tags)
 
         self.workspace_option = QueryOptionControl(
             'workspace',
@@ -127,3 +127,6 @@ class FileOpenForm(ActionForm, QtWidgets.QDialog):
         if self.workspace_option.get() is not self.data.workspace:
             self.workspace_option.set(self.data.workspace)
         self.files.set_data(self.data.workspace)
+
+    def sizeHint(self):
+        return QtCore.QSize(640, 480)
