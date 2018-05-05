@@ -66,6 +66,14 @@ class FileOpenForm(ActionForm, QtWidgets.QDialog):
     def get_kwargs(self):
         return dict(file=self.files.get_file())
 
+    def project_changed(self, control):
+        tags = self.data.workspace.tags
+        project = control.get()
+        workspace = project.children(*tags).one()
+
+        query = project.children(*tags)
+        self.workspace_option.set_query(query, workspace)
+
     def workspace_changed(self, control):
         ctx = construct.Context.from_path(control.get().path)
         self.set_data(ctx)
@@ -73,6 +81,25 @@ class FileOpenForm(ActionForm, QtWidgets.QDialog):
     def create(self):
         # Make sure this fucker gets styled
         self.setAttribute(QtCore.Qt.WA_StyledBackground)
+
+        # Setup project control
+        def format_project(project):
+            return project.name
+
+        query = construct.search(
+            root=self.data.root,
+            tags=['project'],
+            depth=2
+        )
+
+        self.project_option = QueryOptionControl(
+            'project',
+            query=query,
+            formatter=format_project,
+            default=self.data.project,
+            parent=self
+        )
+        self.project_option.changed.connect(self.project_changed)
 
         # Setup workspace control
         def format_workspace(workspace):
@@ -115,15 +142,20 @@ class FileOpenForm(ActionForm, QtWidgets.QDialog):
         self.grid = QtWidgets.QGridLayout()
         self.grid.setContentsMargins(20, 20, 20, 20)
         self.grid.setVerticalSpacing(20)
-        self.grid.setColumnStretch(0, 1)
-        self.grid.addWidget(self.workspace_option, 0, 0, 1, 3)
-        self.grid.addWidget(self.files, 1, 0, 1, 3)
-        self.grid.addWidget(self.cancel_button, 2, 1)
-        self.grid.addWidget(self.open_button, 2, 2)
+        self.grid.setColumnStretch(1, 1)
+        self.grid.addWidget(QtWidgets.QLabel('Project'), 0, 0)
+        self.grid.addWidget(self.project_option, 0, 1, 1, 3)
+        self.grid.addWidget(QtWidgets.QLabel('Workspace'), 1, 0)
+        self.grid.addWidget(self.workspace_option, 1, 1, 1, 3)
+        self.grid.addWidget(self.files, 2, 0, 1, 4)
+        self.grid.addWidget(self.cancel_button, 3, 2)
+        self.grid.addWidget(self.open_button, 3, 3)
 
         self.setLayout(self.grid)
 
     def update(self):
+        if self.project_option.get() is not self.data.project:
+            self.project_option.set(self.data.project)
         if self.workspace_option.get() is not self.data.workspace:
             self.workspace_option.set(self.data.workspace)
         self.files.set_data(self.data.workspace)

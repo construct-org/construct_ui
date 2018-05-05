@@ -313,10 +313,11 @@ class QueryOptionControl(Control, QtWidgets.QComboBox):
     def __init__(self, name, query, formatter, default=None, parent=None):
         self.query = query
         self.formatter = formatter
+        self.options = []
         self.models = []
-        if default and default not in self.models:
+        if default:
             self.models.append(default)
-        self.options = [formatter(e) for e in self.models]
+            self.options.append(self.formatter(default))
         super(QueryOptionControl, self).__init__(name, default, parent)
 
     def fetch(self):
@@ -336,10 +337,16 @@ class QueryOptionControl(Control, QtWidgets.QComboBox):
         query.daemon = True
         query.start()
 
-    def set_query(self, query):
-        self.models = []
-        self.options = []
+    def set_query(self, query, default=None):
         self.clear()
+        self.options = []
+        self.models = []
+        if default:
+            self.models.append(default)
+            self.options.append(self.formatter(default))
+            self.addItem(self.options[0])
+            self.set(default)
+            self.send_changed()
         self.query = query
         self.fetch()
 
