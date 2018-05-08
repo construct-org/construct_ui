@@ -16,6 +16,6 @@ class ActionUIProvider(Extension):
             return False
 
     def load(self):
-        from construct_ui.forms import FileOpenForm
+        from construct_ui.forms import FileOpenForm, FileSaveForm
         self.add_form('file.open', FileOpenForm)
-        # self.add_form('file.save', FileSaveForm)
+        self.add_form('file.save', FileSaveForm)

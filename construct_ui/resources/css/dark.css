@@ -7,6 +7,15 @@ QWidget {
   selection-background-color: #333;
   selection-color: #fff; }
 
+QLabel[align='left'] {
+  qproperty-alignment: 'AlignLeft | AlignVCenter'; }
+
+QLabel[align='right'] {
+  qproperty-alignment: 'AlignRight | AlignVCenter'; }
+
+QLabel[align='center'] {
+  qproperty-alignment: 'AlignCenter | AlignVCenter'; }
+
 QLineEdit {
   background: #4d4d4d;
   border-radius: 2px;
@@ -38,11 +47,54 @@ QPushButton:pressed, QPushButton:checked {
 QPushButton:disabled {
   color: #737373; }
 
+QSpinBox,
+QDoubleSpinBox {
+  background: #4d4d4d;
+  color: #fff;
+  border-radius: 2px;
+  outline: none;
+  padding: 8px;
+  padding-left: 16px;
+  padding-right: 16px; }
+
+QSpinBox[valid='false'],
+QDoubleSpinBox[valid='false'] {
+  color: #cb2828; }
+
+QSpinBox::up-button,
+QDoubleSpinBox::up-button {
+  background: rgba(255, 255, 255, 0%);
+  border-bottom: 5px solid #fff;
+  border-left: 5px solid rgba(255, 255, 255, 0%);
+  border-right: 5px solid rgba(255, 255, 255, 0%);
+  border-top: 0px solid rgba(255, 255, 255, 0%);
+  margin-bottom: 2px;
+  margin-left: 3px;
+  margin-right: 3px;
+  margin-top: -2px;
+  right: 4px;
+  subcontrol-origin: padding;
+  subcontrol-position: top right; }
+
+QSpinBox::down-button,
+QDoubleSpinBox::down-button {
+  background: rgba(255, 255, 255, 0%);
+  border-bottom: 0px solid rgba(255, 255, 255, 0%);
+  border-left: 5px solid rgba(255, 255, 255, 0%);
+  border-right: 5px solid rgba(255, 255, 255, 0%);
+  border-top: 5px solid #fff;
+  margin-bottom: -2px;
+  margin-left: 3px;
+  margin-right: 3px;
+  margin-top: 2px;
+  right: 4px;
+  subcontrol-origin: padding;
+  subcontrol-position: bottom right; }
+
 QComboBox {
   background: #4d4d4d;
   color: #fff;
   border-radius: 2px;
-  font: 10pt "Arial";
   outline: none;
   padding: 8px;
   padding-left: 16px;

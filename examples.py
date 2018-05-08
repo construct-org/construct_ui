@@ -16,25 +16,31 @@ def apply_style(widget, style_name):
     widget.setStyleSheet(style)
 
 
-def show_file_open_form():
+def form_for_action(action_or_identifier):
 
-    # configure construct
-    construct.init()
-    workspace = construct.search(tags=['workspace']).one()
-    construct.set_context_from_entry(workspace)
-    action = construct.actions.get('file.open')
+    if construct.action.is_action_type(action_or_identifier):
+        action = action_or_identifier
+    else:
+        action = construct.actions.get(action_or_identifier)
 
-    # show form
-    app = QtWidgets.QApplication(sys.argv)
-    apply_style(app, 'dark')
+    try:
+        host = construct.get_host()
+        parent = host.get_qt_parent()
+    except AttributeError:
+        host = None
+        parent = None
 
-    form = forms.FileOpenForm(action)
-    form.show()
+    form_cls = construct.get_form(action.identifier)
+    if form_cls:
+        form = form_cls(action, construct.get_context(), parent)
+        form.setStyleSheet(resources.style('dark'))
+        return form
 
-    sys.exit(app.exec_())
+    return None
 
 
-if __name__ == '__main__':
+def main():
+    # configure bands
     import bands
 
     class LoggingDispatcher(bands.Dispatcher):
@@ -48,4 +54,27 @@ if __name__ == '__main__':
 
     bands.get_band().dispatcher = LoggingDispatcher('bands')
 
-    show_file_open_form()
+    # configure construct
+    construct.init()
+    workspace = construct.search(tags=['workspace']).one()
+    construct.set_context_from_entry(workspace)
+
+    # configure qapp with dynamic stylesheet
+    app = QtWidgets.QApplication(sys.argv)
+    apply_style(app, 'dark')
+
+    # Show some forms
+    form = form_for_action('file.open')
+    apply_style(form, 'dark')
+    form.exec_()
+
+    form = form_for_action('file.save')
+    apply_style(form, 'dark')
+    form.show()
+
+    # Wait for app loop to finish and exit
+    sys.exit(app.exec_())
+
+
+if __name__ == '__main__':
+    main()

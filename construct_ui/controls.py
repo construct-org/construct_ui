@@ -12,6 +12,7 @@ Wraps all standard control widgets providing a unified api.
 from Qt import QtWidgets, QtCore, QtGui
 from abc import abstractmethod
 from construct_ui.utils import ABCNonMeta, is_implemented, not_implemented
+from construct_ui.threads import AsyncQuery
 from bands import channel
 
 
@@ -287,7 +288,7 @@ class AnyCompleter(QtWidgets.QCompleter):
                 data_parts = data.split('/')
                 pattern_parts = pattern.split('/')
                 while pattern_parts:
-                    part = pattern_parts.pop(0)
+                    part = pattern_parts.pop(0).lower()
                     for i, data_part in enumerate(data_parts):
                         if part in data_part:
                             data_parts = data_parts[i:]
@@ -308,10 +309,8 @@ class AnyCompleter(QtWidgets.QCompleter):
 
 class QueryOptionControl(Control, QtWidgets.QComboBox):
 
-    on_query_result = QtCore.Signal(object)
-
     def __init__(self, name, query, formatter, default=None, parent=None):
-        self.query = query
+        self.query = AsyncQuery(query)
         self.formatter = formatter
         self.options = []
         self.models = []
@@ -320,24 +319,9 @@ class QueryOptionControl(Control, QtWidgets.QComboBox):
             self.options.append(self.formatter(default))
         super(QueryOptionControl, self).__init__(name, default, parent)
 
-    def fetch(self):
-        '''Perform the query in a background thread, adding options as we go'''
-
-        def perform_query(control, query):
-            for entry in query:
-                try:
-                    control.on_query_result.emit(entry)
-                except RuntimeError as e:
-                    if 'deleted.' in str(e):
-                        return
-                    raise
-
-        from threading import Thread
-        query = Thread(target=perform_query, args=(self, self.query))
-        query.daemon = True
-        query.start()
-
     def set_query(self, query, default=None):
+        if not self.query.stopped():
+            self.query.stop()
         self.clear()
         self.options = []
         self.models = []
@@ -347,8 +331,10 @@ class QueryOptionControl(Control, QtWidgets.QComboBox):
             self.addItem(self.options[0])
             self.set(default)
             self.send_changed()
-        self.query = query
-        self.fetch()
+
+        self.query = AsyncQuery(query)
+        self.query.result.connect(self.add_model)
+        self.query.start()
 
     def add_model(self, model):
         if model not in self.models:
@@ -379,8 +365,8 @@ class QueryOptionControl(Control, QtWidgets.QComboBox):
         self.setItemDelegate(self.styled_delegate)
 
         # Run query thread
-        self.on_query_result.connect(self.add_model)
-        self.fetch()
+        self.query.result.connect(self.add_model)
+        self.query.start()
 
     def get(self):
         index = self.currentIndex()
