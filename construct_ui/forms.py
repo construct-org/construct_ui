@@ -73,18 +73,6 @@ class FileOpenForm(ActionForm, QtWidgets.QDialog):
     def get_kwargs(self):
         return dict(file=self.files.get_file())
 
-    def project_changed(self, control):
-        tags = self.data.workspace.tags
-        project = control.get()
-        workspace = project.children(*tags).one()
-
-        query = project.children(*tags)
-        self.workspace_option.set_query(query, workspace)
-
-    def workspace_changed(self, control):
-        ctx = construct.Context.from_path(control.get().path)
-        self.set_data(ctx)
-
     def create(self):
         # Make sure the form gets styled
         self.setAttribute(QtCore.Qt.WA_StyledBackground)
@@ -170,17 +158,6 @@ class FileOpenForm(ActionForm, QtWidgets.QDialog):
     def sizeHint(self):
         return QtCore.QSize(560, 480)
 
-
-class FileSaveForm(ActionForm, QtWidgets.QDialog):
-
-    def get_kwargs(self):
-        return dict(
-            workspace=self.workspace_option.get(),
-            name=self.name_control.get(),
-            version=self.version_control.get(),
-            ext=self.ext_control.get(),
-        )
-
     def project_changed(self, control):
         tags = self.data.workspace.tags
         project = control.get()
@@ -193,20 +170,16 @@ class FileSaveForm(ActionForm, QtWidgets.QDialog):
         ctx = construct.Context.from_path(control.get().path)
         self.set_data(ctx)
 
-    def update_preview(self, *args):
-        self.name_preview.setText(self.generate_preview())
 
-    def generate_preview(self):
-        data = self.get_kwargs()
-        data['task'] = self.data
-        data['version'] = '{0:>3d}'.format(data['version'])
-        tmpl = construct.get_path_template('workspace_file')
-        return tmpl.format(dict(
-            task=self.data.task.short,
+class FileSaveForm(ActionForm, QtWidgets.QDialog):
+
+    def get_kwargs(self):
+        return dict(
+            workspace=self.workspace_option.get(),
             name=self.name_control.get(),
-            version='{:0>3d}'.format(self.version_control.get()),
-            ext=self.ext_control.get()
-        ))
+            version=self.version_control.get(),
+            ext=self.ext_control.get(),
+        )
 
     def create(self):
 
@@ -270,19 +243,19 @@ class FileSaveForm(ActionForm, QtWidgets.QDialog):
             QtCore.QRegExp('[A-Za-z0-9_]+')
         )
         self.name_control.setValidator(self.name_validator)
-        self.name_control.changed.connect(self.update_preview)
+        self.name_control.changed.connect(self.update_version)
         self.version_control = IntControl(
             'name',
-            range=[1, 200],
+            range=[1, 999],
             default=params['version']['default'],
             parent=self
         )
         self.version_control.changed.connect(self.update_preview)
         self.ext_control = OptionControl(
-            'extension',
-            options=params['extension']['options'],
+            'ext',
+            options=params['ext']['options'],
         )
-        self.ext_control.changed.connect(self.update_preview)
+        self.ext_control.changed.connect(self.update_version)
 
         self.name_preview = Label(self.generate_preview())
 
@@ -336,5 +309,40 @@ class FileSaveForm(ActionForm, QtWidgets.QDialog):
         params = self.action.parameters(self.data)
         self.name_control.set(params['name']['default'])
         self.version_control.set(params['version']['default'])
-        self.ext_control.set(params['extension']['default'])
+        self.ext_control.set(params['ext']['default'])
         self.update_preview()
+
+    def project_changed(self, control):
+        tags = self.data.workspace.tags
+        project = control.get()
+        workspace = project.children(*tags).one()
+
+        query = project.children(*tags)
+        self.workspace_option.set_query(query, workspace)
+
+    def workspace_changed(self, control):
+        ctx = construct.Context.from_path(control.get().path)
+        self.set_data(ctx)
+
+    def update_version(self, control):
+        workspace = self.data.workspace
+        name = self.name_control.get()
+        ext = self.ext_control.get()
+        next_version = workspace.get_next_version(name, ext)
+        self.version_control.set(next_version)
+        self.update_preview()
+
+    def update_preview(self, *args):
+        self.name_preview.setText(self.generate_preview())
+
+    def generate_preview(self):
+        data = self.get_kwargs()
+        data['task'] = self.data
+        data['version'] = '{0:>3d}'.format(data['version'])
+        tmpl = construct.get_path_template('workspace_file')
+        return tmpl.format(dict(
+            task=self.data.task.short,
+            name=self.name_control.get(),
+            version='{:0>3d}'.format(self.version_control.get()),
+            ext=self.ext_control.get()
+        ))
