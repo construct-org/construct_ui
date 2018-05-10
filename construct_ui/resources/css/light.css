@@ -1,5 +1,5 @@
 QWidget {
-  font: 100% Helvetica, sans-serif;
+  font: 100% Helvetica, Arial, sans-serif;
   font-size: 12pt;
   font-weight: normal;
   background: #fff;
@@ -7,14 +7,8 @@ QWidget {
   selection-background-color: #fff;
   selection-color: #000; }
 
-QLabel[align='left'] {
-  qproperty-alignment: 'AlignLeft | AlignVCenter'; }
-
-QLabel[align='right'] {
-  qproperty-alignment: 'AlignRight | AlignVCenter'; }
-
-QLabel[align='center'] {
-  qproperty-alignment: 'AlignCenter | AlignVCenter'; }
+QLabel[valid=false] {
+  color: #cb2828; }
 
 QLineEdit {
   background: #e6e6e6;
@@ -26,7 +20,7 @@ QLineEdit {
   padding-left: 16px;
   padding-right: 16px; }
 
-QLineEdit[valid='false'] {
+QLineEdit[valid=false] {
   border: 1px solid #cb2828;
   color: #cb2828; }
 
@@ -57,8 +51,8 @@ QDoubleSpinBox {
   padding-left: 16px;
   padding-right: 16px; }
 
-QSpinBox[valid='false'],
-QDoubleSpinBox[valid='false'] {
+QSpinBox[valid=false],
+QDoubleSpinBox[valid=false] {
   color: #cb2828; }
 
 QSpinBox::up-button,
@@ -100,7 +94,7 @@ QComboBox {
   padding-left: 16px;
   padding-right: 16px; }
 
-QComboBox[valid='false'] {
+QComboBox[valid=false] {
   color: #cb2828; }
 
 QComboBox::drop-down {
@@ -125,11 +119,11 @@ QComboBox::down-arrow {
   margin-right: 3px;
   margin-top: 4px; }
 
-QAbstractItemView[completer='true'] {
+QAbstractItemView[completer=true] {
   background: blue; }
 
 QComboBox QAbstractItemView,
-QAbstractItemView[completer='true'] {
+QAbstractItemView[completer=true] {
   background: #e6e6e6;
   border: none;
   color: #000;
@@ -138,7 +132,7 @@ QAbstractItemView[completer='true'] {
   selection-color: #000; }
 
 QComboBox QAbstractItemView::item,
-QAbstractItemView[completer='true']::item {
+QAbstractItemView[completer=true]::item {
   border: 0;
   color: 0;
   outline: none;
@@ -149,8 +143,8 @@ QAbstractItemView[completer='true']::item {
 
 QComboBox QAbstractItemView::item:selected:active,
 QComboBox QAbstractItemView::item:hover,
-QAbstractItemView[completer='true']::item:selected:active,
-QAbstractItemView[completer='true']::item:hover {
+QAbstractItemView[completer=true]::item:selected:active,
+QAbstractItemView[completer=true]::item:hover {
   background: #d9d9d9; }
 
 QScrollBar:vertical {

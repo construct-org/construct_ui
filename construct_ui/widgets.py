@@ -1,22 +1,27 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from Qt import QtWidgets
+from Qt import  QtCore, QtWidgets
+from construct_ui.properties import StyledProperty, init_properties
 
 
 class Label(QtWidgets.QLabel):
 
-    def __init__(self, text, align='left', parent=None):
+    valid = StyledProperty('valid', True)
+
+    def __init__(self, text, parent=None):
         super(Label, self).__init__(text, parent)
-        self.setProperty('align', align)
+        init_properties(self)
 
 
 class RightLabel(Label):
 
     def __init__(self, text, parent=None):
-        super(RightLabel, self).__init__(text, 'right', parent)
+        super(RightLabel, self).__init__(text, parent)
+        self.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
 
 
 class CenterLabel(Label):
 
     def __init__(self, text, parent=None):
-        super(CenterLabel, self).__init__(text, 'center', parent)
+        super(CenterLabel, self).__init__(text, parent)
+        self.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)

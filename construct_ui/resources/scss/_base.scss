@@ -1,5 +1,5 @@
 // Fonts
-$font-stack: Helvetica, sans-serif !default;
+$font-stack: Helvetica, Arial, sans-serif !default;
 $font-size: 12pt !default;
 $font-weight: normal;
 
@@ -31,16 +31,8 @@ QWidget {
 
 // QLabels
 
-QLabel[align='left'] {
-    qproperty-alignment: 'AlignLeft | AlignVCenter'
-}
-
-QLabel[align='right'] {
-    qproperty-alignment: 'AlignRight | AlignVCenter'
-}
-
-QLabel[align='center'] {
-    qproperty-alignment: 'AlignCenter | AlignVCenter'
+QLabel[valid=false] {
+    color: $error-color;
 }
 
 
@@ -57,7 +49,7 @@ QLineEdit{
     padding-right: $text-padding * 2;
 }
 
-QLineEdit[valid='false']{
+QLineEdit[valid=false]{
     border: 1px solid $error-color;
     color: $error-color;
 }
@@ -99,8 +91,8 @@ QDoubleSpinBox {
     padding-right: $text-padding * 2;
 }
 
-QSpinBox[valid='false'],
-QDoubleSpinBox[valid='false'] {
+QSpinBox[valid=false],
+QDoubleSpinBox[valid=false] {
     color: $error-color;
 }
 
@@ -148,7 +140,7 @@ QComboBox {
     padding-right: $text-padding * 2;
 }
 
-QComboBox[valid='false'] {
+QComboBox[valid=false] {
     color: $error-color;
 }
 
@@ -177,12 +169,12 @@ QComboBox::down-arrow{
     margin-top: 4px;
 }
 
-QAbstractItemView[completer='true']{
+QAbstractItemView[completer=true]{
     background: blue;
 }
 
 QComboBox QAbstractItemView,
-QAbstractItemView[completer='true']{
+QAbstractItemView[completer=true]{
     // show-decoration-selected: 1;
     background: $focus-color;
     border: none;
@@ -193,7 +185,7 @@ QAbstractItemView[completer='true']{
 }
 
 QComboBox QAbstractItemView::item,
-QAbstractItemView[completer='true']::item{
+QAbstractItemView[completer=true]::item{
     border: 0;
     color: 0;
     outline: none;
@@ -205,8 +197,8 @@ QAbstractItemView[completer='true']::item{
 
 QComboBox QAbstractItemView::item:selected:active,
 QComboBox QAbstractItemView::item:hover,
-QAbstractItemView[completer='true']::item:selected:active,
-QAbstractItemView[completer='true']::item:hover{
+QAbstractItemView[completer=true]::item:selected:active,
+QAbstractItemView[completer=true]::item:hover{
     background: $pressed-color;
 }
 

@@ -9,16 +9,22 @@ Wraps all standard control widgets providing a unified api.
 - `Control.get` gets the value of a control
 - `Control.set` sets the value of a control
 '''
-from Qt import QtWidgets, QtCore, QtGui
+import inspect
 from abc import abstractmethod
-from construct_ui.utils import ABCNonMeta, is_implemented, not_implemented
-from construct_ui.threads import AsyncQuery
+
+from Qt import QtWidgets, QtCore, QtGui
 from bands import channel
+
+from construct_ui.utils import ABCNonMeta, is_implemented, not_implemented
+from construct_ui.properties import StyledProperty, init_properties
+from construct_ui.threads import AsyncQuery
 
 
 class Control(ABCNonMeta):
 
     changed = channel('changed')
+    valid = StyledProperty('valid', True)
+    error = StyledProperty('error', False)
 
     def __init__(self, name, default=None, parent=None):
         super(Control, self).__init__(parent=parent)
@@ -28,6 +34,8 @@ class Control(ABCNonMeta):
         self.create()
         if default is not None:
             self.set(default)
+
+        init_properties(self)
 
     def send_changed(self):
         self.changed.send(self)

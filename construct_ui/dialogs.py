@@ -11,7 +11,7 @@ def ask(question, more=None):
     host = construct.get_host()
     parent = None
     if host:
-        parent = host.get_qt_parent(QtWidgets.QMainWindow)
+        parent = host.get_qt_parent()
 
     dialog = QtWidgets.QMessageBox(parent)
     dialog.setStyleSheet(resources.style('dark'))

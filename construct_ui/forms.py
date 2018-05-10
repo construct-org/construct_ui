@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from Qt import QtWidgets, QtCore, QtGui
-from bands import channel
 from abc import abstractmethod
+import os
+
+from bands import channel
+from Qt import QtWidgets, QtCore, QtGui
+
 import construct
+from construct import utils
 from construct_ui.controls import (
     QueryOptionControl,
     StringControl,
@@ -333,7 +337,10 @@ class FileSaveForm(ActionForm, QtWidgets.QDialog):
         self.update_preview()
 
     def update_preview(self, *args):
-        self.name_preview.setText(self.generate_preview())
+        new_filename = self.generate_preview()
+        self.name_preview.setText(new_filename)
+        full_path = utils.unipath(self.data.workspace.path, new_filename)
+        self.name_preview.valid = not os.path.exists(full_path)
 
     def generate_preview(self):
         data = self.get_kwargs()
