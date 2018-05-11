@@ -6,7 +6,7 @@ from construct_ui import resources
 from Qt import QtWidgets
 
 
-def ask(question, more=None):
+def ask(question, more=None, title=None):
 
     host = construct.get_host()
     parent = None
@@ -23,6 +23,8 @@ def ask(question, more=None):
         QtWidgets.QSizePolicy.Expanding,
         QtWidgets.QSizePolicy.Expanding,
     )
+    if title:
+        dialog.setWindowTitle(title)
 
     response = dialog.exec_()
     if response == dialog.Yes:
