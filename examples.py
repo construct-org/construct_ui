@@ -10,8 +10,8 @@ from construct_ui import controls, forms, resources
 
 def apply_style(widget, style_name):
     from live import LiveStyle
-    style = resources.style(style_name)
-    style_path = resources.style_path(style_name)
+    style = resources.read(style_name)
+    style_path = resources.path(style_name)
     LiveStyle(style_path, widget)
     widget.setStyleSheet(style)
 
@@ -33,7 +33,7 @@ def form_for_action(action_or_identifier):
     form_cls = construct.get_form(action.identifier)
     if form_cls:
         form = form_cls(action, construct.get_context(), parent)
-        form.setStyleSheet(resources.style('dark'))
+        form.setStyleSheet(resources.read(':/styles/dark'))
         return form
 
     return None
@@ -61,15 +61,15 @@ def main():
 
     # configure qapp with dynamic stylesheet
     app = QtWidgets.QApplication(sys.argv)
-    apply_style(app, 'dark')
+    apply_style(app, ':/styles/dark')
 
     # Show some forms
     form = form_for_action('file.open')
-    apply_style(form, 'dark')
+    apply_style(form, ':/styles/dark')
     form.exec_()
 
     form = form_for_action('file.save')
-    apply_style(form, 'dark')
+    apply_style(form, ':/styles/dark')
     form.show()
 
     # Wait for app loop to finish and exit

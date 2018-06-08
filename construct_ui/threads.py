@@ -12,6 +12,8 @@ class QuerySignals(QtCore.QObject):
 class AsyncQuery(threading.Thread):
 
     def __init__(self, query):
+        super(AsyncQuery, self).__init__()
+        self.daemon = True
         self.query = query
         self._shutdown = threading.Event()
         self._stopped = threading.Event()
@@ -19,13 +21,15 @@ class AsyncQuery(threading.Thread):
 
         self._signals = QuerySignals()
         self.result = self._signals.result
-        super(AsyncQuery, self).__init__()
 
     def started(self):
         return self._started.is_set()
 
     def stopped(self):
         return self._stopped.is_set()
+
+    def running(self):
+        return self.started and not self.stopped
 
     def stop(self):
         self._shutdown.set()

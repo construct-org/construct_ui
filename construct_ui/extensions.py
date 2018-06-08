@@ -17,5 +17,6 @@ class ActionUIProvider(Extension):
 
     def load(self):
         from construct_ui.forms import FileOpenForm, FileSaveForm
+
         self.add_form('file.open', FileOpenForm)
         self.add_form('file.save', FileSaveForm)

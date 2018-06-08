@@ -1,63 +1,81 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import os
+import glob
 from construct.utils import unipath
+from construct_ui import _resources
 
 
-this_folder = unipath(os.path.dirname(__file__))
-STYLES = {}
+THIS_PATH = unipath(os.path.dirname(__file__))
+ICON_EXT = '.png'
+ICONS_GLOB = unipath(THIS_PATH, 'icons', '*' + ICON_EXT)
+STYLE_EXT = '.css'
+STYLES_GLOB = unipath(THIS_PATH, 'styles', '*' + STYLE_EXT)
+CACHE = {}
 
 
-def styles():
-    '''Get a dict containing all stylesheets'''
-
-    data = {}
-    root = unipath(this_folder, 'css')
-    for f in os.listdir(root):
-        path = unipath(root, f)
-        if os.path.isfile(path):
-            name = f.split('.')[0]
-            if name not in STYLES:
-                with open(path, 'r') as f:
-                    data[name] = {'style': f.read(), 'path': path}
-    return data
+class ResourceError(Exception):
+    pass
 
 
-def style(name):
-    '''Get a stylesheet by name'''
+def read(resource):
+    '''Read a resource'''
 
-    try:
-        return styles()[name]['style']
-    except KeyError:
-        raise KeyError('Could not find style: %s' % name)
-
-
-def style_path(name):
-    '''Get the fullpath to a stylesheet by name'''
-
-    try:
-        return styles()[name]['path']
-    except KeyError:
-        raise KeyError('Could not find style: %s' % name)
+    resource_path = path(resource)
+    with open(resource_path, 'r') as f:
+        return f.read()
 
 
-def icons():
-    '''Get a dict containing all icons'''
+def path(resource):
+    '''Get a resources filepath'''
 
-    data = {}
-    root = unipath(this_folder, 'icons')
-    for f in os.listdir(root):
-        path = unipath(root, f)
-        if os.path.isfile(path):
-            name = f.split('.')[0]
-            data[name] = path
-    return data
+    if resource.startswith(':/icons'):
+        potential_path = unipath(THIS_PATH, resource.lstrip(':/') + ICON_EXT)
+        if not os.path.isfile(potential_path):
+            raise ResourceError('Could not find resource: ' + resource)
+        return potential_path
+
+    if resource.startswith(':/styles'):
+        potential_path = unipath(THIS_PATH, resource.lstrip(':/') + STYLE_EXT)
+        if not os.path.isfile(potential_path):
+            raise ResourceError('Could not find resource: ' + resource)
+        return potential_path
 
 
-def icon(name):
-    '''Get the fullpath of an icon by name'''
+def list():
+    '''List all resources'''
 
-    try:
-        return icons()[name]
-    except KeyError:
-        raise KeyError('Could not find icon: %s' % name)
+    resources = []
+
+    for filepath in glob.glob(ICONS_GLOB):
+        filepath = unipath(filepath)
+        basename = os.path.basename(filepath)
+        name, ext = os.path.splitext(basename)
+        resources.append(':/icons/' + name)
+
+    for filepath in glob.glob(STYLES_GLOB):
+        filepath = unipath(filepath)
+        basename = os.path.basename(filepath)
+        name, ext = os.path.splitext(basename)
+        resources.append(':/styles/' + name)
+
+
+def qfile(resource):
+    '''Get a resource as a QFile'''
+
+    from Qt import QtGui
+    return QtGui.QFile(resource)
+
+
+def qicon(resource):
+    '''Get a resource as a QIcon'''
+
+    from Qt import QtGui
+    return QtGui.QIcon(resource)
+
+
+def qpixmap(resource):
+    '''Get a resource as a QPixmap'''
+
+    from Qt import QtGui
+    return QtGui.QPixmap(resource)

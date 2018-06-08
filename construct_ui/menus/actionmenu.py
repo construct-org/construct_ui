@@ -21,7 +21,7 @@ class ActionMenu(QtWidgets.QMenu):
 
 
 def create_action_menu(groups=None, parent=None):
-    '''Decoupled from ActionMenu class so we can use it with Maya directly'''
+    '''Decoupled from ActionMenu class so we can use it with existing menus'''
 
     if groups is None:
         groups = group_actions(construct.actions.collect())
@@ -42,16 +42,16 @@ def create_action_menu_item(action, parent):
     '''Creates a QAction from a Construct Action'''
 
     def menu_action():
+        '''Attempts to create a form for the menu item's Action. If no form is
+        available, just run the action.
         '''
-        Attempts to create a form for the menu item's Action.
-        If no form is available, just run the action.
-        '''
+
         host = construct.get_host()
         parent = host.get_qt_parent()
         form_cls = construct.get_form(action.identifier)
         if form_cls:
             form = form_cls(action, construct.get_context(), parent)
-            form.setStyleSheet(resources.style('dark'))
+            form.setStyleSheet(resources.read(':/styles/dark'))
             form.show()
         else:
             action().run()

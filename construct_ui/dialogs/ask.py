@@ -14,7 +14,7 @@ def ask(question, more=None, title=None):
         parent = host.get_qt_parent()
 
     dialog = QtWidgets.QMessageBox(parent)
-    dialog.setStyleSheet(resources.style('dark'))
+    dialog.setStyleSheet(resources.read(':/styles/dark'))
     dialog.setText(question)
     if more:
         dialog.setInformativeText(more)
