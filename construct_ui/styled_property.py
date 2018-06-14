@@ -27,13 +27,12 @@ class StyledProperty(object):
         obj.setProperty(self.name, value)
         obj.setStyle(obj.style())
 
-    @staticmethod
-    def init(obj):
+    @classmethod
+    def init(cls, obj):
         '''Initialize properties...call in __init__ method of a class that has
         StyledProperties.'''
 
-        for _, prop in getmembers(obj, lambda x: isinstance(x, StyledProperty)):
-            print(prop, prop.name, prop.default)
+        for _, prop in getmembers(obj.__class__, lambda x: isinstance(x, cls)):
             obj.__dict__.setdefault('_properties', {})
             obj._properties.setdefault(prop.name, prop.default)
             obj.setProperty(prop.name, prop.default)

@@ -3,7 +3,8 @@ from __future__ import absolute_import
 
 from Qt import QtWidgets, QtCore
 
-from construct_ui.widgets.buttons import IconButton
+from construct_ui.utils import get_scale_factor
+from construct_ui.widgets.icons import Icon
 from construct_ui.widgets.labels import Label
 
 
@@ -13,27 +14,31 @@ class Header(QtWidgets.QWidget):
         super(Header, self).__init__(parent)
 
         self.menu = QtWidgets.QMenu(parent=self)
-        self.menu_button = IconButton(parent=self)
+        self.menu_button = Icon(':/icons/menu', parent=self)
         self.menu_button.clicked.connect(self.show_menu)
-        self.header_label = Label(text, parent=self)
+        self.menu_button.setFixedSize(100, 100)
+        self.menu_button.hide()
+        self.header_label = Label(text)
+        self.header_label.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
+        self.header_label.setFocusPolicy(QtCore.Qt.NoFocus)
 
-        self._layout = QtWidgets.QGridLayout()
+        self.setMinimumHeight(48 * get_scale_factor())
+        self._layout = QtWidgets.QHBoxLayout()
         self._layout.setContentsMargins(0, 0, 0, 0)
-
-        self._layout.addWidget(0, 0, self.menu_button)
-        self._layout.addWidget(0, 1, self.header_label)
+        self._layout.addWidget(self.menu_button)
+        self._layout.addWidget(self.header_label)
+        self._layout.addStretch(1)
+        self.setLayout(self._layout)
 
     def show_menu(self):
-        x = int(self.menu_button.width() * 0.5)
-        y = self.menu_button.height()
-        pos = self.menu_button.mapToGlobal(QtCore.QPoint(x, y))
-        self.menu.popup(pos)
+        pos = QtCore.QPoint(0, self.menu_button.height())
+        self.menu.popup(self.menu_button.mapToGlobal(pos))
 
     def add_menu_item(self, text, callback, icon=None):
-        pass
-
-    def remove_menu_item(self):
-        pass
+        menu_item = QtWidgets.QAction(text, parent=self)
+        menu_item.triggered.connect(callback)
+        self.menu.addAction(menu_item)
+        self.menu_button.show()
 
     def add_menu_callback(self, callback):
-        pass
+        self.menu.aboutToShow.connect(callback)

@@ -1,12 +1,14 @@
 // Fonts
-$font-stack: Helvetica, Arial, sans-serif !default;
+$font-stack: Roboto Regular, Helvetica, Arial, sans-serif !default;
 $font-size: 12pt !default;
 $font-weight: normal;
+
+$font-light-stack: Roboto Thin, Helvetica, Arial, sans-serif !default;
 
 // Colors
 $transparent: rgba(255, 255, 255, 0);
 $background-color: #333 !default;
-$primary-color: #fff !default;
+$primary-color: #f2f2f2 !default;
 $focus-color: #fff * 0.3 !default;
 $pressed-color: #fff * 0.35 !default;
 $disabled-color: #fff * 0.45 !default;
@@ -30,6 +32,16 @@ QWidget {
 
 
 // QLabels
+
+QLabel {
+    padding: 8px 20px 8px 20px;
+}
+
+QLabel[titlebar=true] {
+    padding: 8px 20px 8px 20px;
+    font: 100% $font-light-stack;
+    font-size: 10pt;
+}
 
 QLabel[valid=false] {
     color: $error-color;
@@ -55,6 +67,15 @@ QLineEdit[valid=false]{
 }
 
 // Buttons
+
+.Icon {
+    background: $transparent;
+    padding: 0;
+}
+
+.Icon:hover {
+    background: $focus_color;
+}
 
 QPushButton {
     border-radius: $border-radius;

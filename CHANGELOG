@@ -1,0 +1,11 @@
+Release Notes
+=============
+
+0.1.6 (pending)
+
+* Refactor code base
+* Add basic dpi scaling
+* Add Question dialog
+* Add Roboto Font
+* Add more icons
+* Rename IconButton to Icon

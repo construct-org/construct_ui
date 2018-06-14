@@ -51,7 +51,7 @@ def create_action_menu_item(action, parent):
         form_cls = construct.get_form(action.identifier)
         if form_cls:
             form = form_cls(action, construct.get_context(), parent)
-            form.setStyleSheet(resources.read(':/styles/dark'))
+            form.setStyleSheet(resources.style(':/styles/dark'))
             form.show()
         else:
             action().run()

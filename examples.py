@@ -2,10 +2,10 @@
 from __future__ import absolute_import
 import sys
 
-from Qt import QtWidgets, QtCore, QtGui
+from Qt import QtWidgets
 
 import construct
-from construct_ui import controls, forms, resources
+from construct_ui import resources, dialogs, widgets
 
 
 def apply_style(widget, style_name):
@@ -14,6 +14,50 @@ def apply_style(widget, style_name):
     style_path = resources.path(style_name)
     LiveStyle(style_path, widget)
     widget.setStyleSheet(style)
+
+
+def ask_a_question():
+    app = QtWidgets.QApplication(sys.argv)
+    resources.init()
+
+    if dialogs.ask('Are you okay?', 'seriously', 'AYO'):
+        print('YAY!')
+    sys.exit()
+
+
+def show_frameless_dialog():
+    app = QtWidgets.QApplication(sys.argv)
+    resources.init()
+
+    dialog = dialogs.FramelessDialog('Hello World')
+    apply_style(dialog, ':/styles/dark')
+
+    sys.exit(dialog.exec_())
+
+
+def show_header():
+
+    def null():
+        print('Action')
+
+    app = QtWidgets.QApplication(sys.argv)
+    resources.init()
+
+    dialog = QtWidgets.QDialog()
+    apply_style(dialog, ':/styles/dark')
+
+    header = widgets.Header('Hello World!')
+    header.add_menu_item('Item 1', null)
+    header.add_menu_item('Item 2', null)
+    header.add_menu_item('Item 3', null)
+    header.add_menu_item('Item 4', null)
+    layout = QtWidgets.QVBoxLayout()
+    layout.setContentsMargins(0, 0, 0, 0)
+    layout.addWidget(header)
+    layout.addStretch(1)
+    dialog.setLayout(layout)
+
+    sys.exit(dialog.exec_())
 
 
 def form_for_action(action_or_identifier):
@@ -33,13 +77,13 @@ def form_for_action(action_or_identifier):
     form_cls = construct.get_form(action.identifier)
     if form_cls:
         form = form_cls(action, construct.get_context(), parent)
-        form.setStyleSheet(resources.read(':/styles/dark'))
+        form.setStyleSheet(resources.style(':/styles/dark'))
         return form
 
     return None
 
 
-def main():
+def show_action_forms():
     # configure bands
     import bands
 
@@ -61,6 +105,7 @@ def main():
 
     # configure qapp with dynamic stylesheet
     app = QtWidgets.QApplication(sys.argv)
+    resources.init()
     apply_style(app, ':/styles/dark')
 
     # Show some forms
@@ -77,4 +122,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    ask_a_question()

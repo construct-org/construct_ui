@@ -1,11 +1,19 @@
 QWidget {
-  font: 100% Helvetica, Arial, sans-serif;
+  font: 100% Roboto Regular, Helvetica, Arial, sans-serif;
   font-size: 12pt;
   font-weight: normal;
   background: #333;
-  color: #fff;
+  color: #f2f2f2;
   selection-background-color: #333;
-  selection-color: #fff; }
+  selection-color: #f2f2f2; }
+
+QLabel {
+  padding: 8px 20px 8px 20px; }
+
+QLabel[titlebar=true] {
+  padding: 8px 20px 8px 20px;
+  font: 100% Roboto Thin, Helvetica, Arial, sans-serif;
+  font-size: 10pt; }
 
 QLabel[valid=false] {
   color: #cb2828; }
@@ -14,7 +22,7 @@ QLineEdit {
   background: #4d4d4d;
   border-radius: 2px;
   border: 0;
-  color: #fff;
+  color: #f2f2f2;
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 16px;
@@ -24,10 +32,17 @@ QLineEdit[valid=false] {
   border: 1px solid #cb2828;
   color: #cb2828; }
 
+.Icon {
+  background: rgba(255, 255, 255, 0%);
+  padding: 0; }
+
+.Icon:hover {
+  background: #4d4d4d; }
+
 QPushButton {
   border-radius: 2px;
   padding: 8px;
-  color: #fff;
+  color: #f2f2f2;
   background: rgba(255, 255, 255, 0%);
   outline: none;
   min-width: 120px; }
@@ -44,7 +59,7 @@ QPushButton:disabled {
 QSpinBox,
 QDoubleSpinBox {
   background: #4d4d4d;
-  color: #fff;
+  color: #f2f2f2;
   border-radius: 2px;
   outline: none;
   padding: 8px;
@@ -58,7 +73,7 @@ QDoubleSpinBox[valid=false] {
 QSpinBox::up-button,
 QDoubleSpinBox::up-button {
   background: rgba(255, 255, 255, 0%);
-  border-bottom: 5px solid #fff;
+  border-bottom: 5px solid #f2f2f2;
   border-left: 5px solid rgba(255, 255, 255, 0%);
   border-right: 5px solid rgba(255, 255, 255, 0%);
   border-top: 0px solid rgba(255, 255, 255, 0%);
@@ -76,7 +91,7 @@ QDoubleSpinBox::down-button {
   border-bottom: 0px solid rgba(255, 255, 255, 0%);
   border-left: 5px solid rgba(255, 255, 255, 0%);
   border-right: 5px solid rgba(255, 255, 255, 0%);
-  border-top: 5px solid #fff;
+  border-top: 5px solid #f2f2f2;
   margin-bottom: -2px;
   margin-left: 3px;
   margin-right: 3px;
@@ -87,7 +102,7 @@ QDoubleSpinBox::down-button {
 
 QComboBox {
   background: #4d4d4d;
-  color: #fff;
+  color: #f2f2f2;
   border-radius: 2px;
   outline: none;
   padding: 8px;
@@ -111,7 +126,7 @@ QComboBox::drop-down:editable {
 
 QComboBox::down-arrow {
   background: rgba(255, 255, 255, 0%);
-  border-top: 5px solid #fff;
+  border-top: 5px solid #f2f2f2;
   border-left: 5px solid rgba(255, 255, 255, 0%);
   border-right: 5px solid rgba(255, 255, 255, 0%);
   border-bottom: 0px solid rgba(255, 255, 255, 0%);
@@ -126,10 +141,10 @@ QComboBox QAbstractItemView,
 QAbstractItemView[completer=true] {
   background: #4d4d4d;
   border: none;
-  color: #fff;
+  color: #f2f2f2;
   outline: none;
   selection-background-color: #4d4d4d;
-  selection-color: #fff; }
+  selection-color: #f2f2f2; }
 
 QComboBox QAbstractItemView::item,
 QAbstractItemView[completer=true]::item {
@@ -155,12 +170,12 @@ QScrollBar:vertical {
   margin: 8px 0px 8px 0px; }
 
 QScrollBar::handle:vertical {
-  background: #fff;
+  background: #f2f2f2;
   border: 0px solid #4d4d4d;
   min-height: 20px; }
 
 QScrollBar::add-line:vertical {
-  border: 0px solid #fff;
+  border: 0px solid #f2f2f2;
   background: #4d4d4d;
   height: 10;
   subcontrol-position: bottom;
@@ -184,12 +199,12 @@ QScrollBar:horizontal {
   margin: 0px 8px 0px 8px; }
 
 QScrollBar::handle:horizontal {
-  background: #fff;
+  background: #f2f2f2;
   border: 0px solid #4d4d4d;
   min-width: 20px; }
 
 QScrollBar::add-line:horizontal {
-  border: 0px solid #fff;
+  border: 0px solid #f2f2f2;
   background: #4d4d4d;
   width: 10;
   subcontrol-position: right;
@@ -230,11 +245,11 @@ QTreeView::item:selected:active, QTreeView::branch:selected:active {
 
 QTreeView::item:selected:!active, QTreeView::branch:selected:!active {
   background: #595959;
-  color: #fff; }
+  color: #f2f2f2; }
 
 QHeaderView::section {
   background-color: #333;
-  color: #fff;
+  color: #f2f2f2;
   padding: 8px;
   border: 0;
   border-bottom: 1px solid #4d4d4d; }
@@ -243,7 +258,7 @@ QHeaderView::down-arrow {
   subcontrol-origin: margin;
   subcontrol-position: right top;
   background: rgba(255, 255, 255, 0%);
-  border-top: 5px solid #fff;
+  border-top: 5px solid #f2f2f2;
   border-left: 5px solid rgba(255, 255, 255, 0%);
   border-right: 5px solid rgba(255, 255, 255, 0%);
   border-bottom: 0px solid rgba(255, 255, 255, 0%);
@@ -261,7 +276,7 @@ QHeaderView::up-arrow {
   border-top: 0px solid rgba(255, 255, 255, 0%);
   border-left: 5px solid rgba(255, 255, 255, 0%);
   border-right: 5px solid rgba(255, 255, 255, 0%);
-  border-bottom: 5px solid #fff;
+  border-bottom: 5px solid #f2f2f2;
   margin-bottom: 32px;
   margin-left: 2px;
   margin-right: 2px;

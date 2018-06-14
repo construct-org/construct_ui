@@ -102,3 +102,6 @@ ENV/
 
 #windows
 Thumbs.db
+
+# Build stuff
+resources.qrc

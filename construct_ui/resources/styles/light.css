@@ -1,11 +1,19 @@
 QWidget {
-  font: 100% Helvetica, Arial, sans-serif;
+  font: 100% Roboto Regular, Helvetica, Arial, sans-serif;
   font-size: 12pt;
   font-weight: normal;
   background: #fff;
   color: #000;
   selection-background-color: #fff;
   selection-color: #000; }
+
+QLabel {
+  padding: 8px 20px 8px 20px; }
+
+QLabel[titlebar=true] {
+  padding: 8px 20px 8px 20px;
+  font: 100% Roboto Thin, Helvetica, Arial, sans-serif;
+  font-size: 10pt; }
 
 QLabel[valid=false] {
   color: #cb2828; }
@@ -23,6 +31,13 @@ QLineEdit {
 QLineEdit[valid=false] {
   border: 1px solid #cb2828;
   color: #cb2828; }
+
+.Icon {
+  background: rgba(255, 255, 255, 0%);
+  padding: 0; }
+
+.Icon:hover {
+  background: #e6e6e6; }
 
 QPushButton {
   border-radius: 2px;
