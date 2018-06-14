@@ -64,9 +64,12 @@ class QueryOptionControl(Control, QtWidgets.QComboBox):
             self.options.append(self.formatter(default))
         super(QueryOptionControl, self).__init__(name, default, parent)
 
-    def set_query(self, query, default=None):
+    def stop_query(self):
         if not self.query.stopped():
             self.query.stop()
+
+    def set_query(self, query, default=None):
+        self.stop_query()
         self.clear()
         self.options = []
         self.models = []

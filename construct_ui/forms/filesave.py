@@ -105,8 +105,6 @@ class FileSaveForm(ActionForm, QtWidgets.QDialog):
         # Setup save button
         self.save_button = QtWidgets.QPushButton('Save', self)
         self.save_button.clicked.connect(self.accept)
-        # self.cancel_button = QtWidgets.QPushButton('Cancel', self)
-        # self.cancel_button.clicked.connect(self.reject)
 
         self.grid = QtWidgets.QGridLayout()
         self.grid.setContentsMargins(20, 20, 20, 20)
@@ -142,6 +140,10 @@ class FileSaveForm(ActionForm, QtWidgets.QDialog):
         self.grid.addWidget(self.save_button, 4, 3)
 
         self.setLayout(self.grid)
+
+    def cleanup(self):
+        self.project_option.stop_query()
+        self.workspace_option.stop_query()
 
     def update(self):
         if self.project_option.get() is not self.data.project:

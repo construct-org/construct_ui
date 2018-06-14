@@ -40,7 +40,10 @@ class FramelessDialog(QtWidgets.QDialog):
         self._resize_area = None
         self.resize_area_size = 16
 
-        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        self.setWindowFlags(
+            QtCore.Qt.Dialog |
+            QtCore.Qt.FramelessWindowHint
+        )
         self.setMouseTracking(True)
         self.setSizePolicy(
             QtWidgets.QSizePolicy.Expanding,
@@ -68,7 +71,10 @@ class FramelessDialog(QtWidgets.QDialog):
         self.grid_layout.addLayout(self.titlebar_layout, 0, 0)
         self.grid_layout.setRowStretch(1, 1)
         self.layout = QtWidgets.QVBoxLayout()
-        margin = [get_scale_factor() * 16] * 4
+        factor = get_scale_factor()
+        margin = [16 * factor] * 4
+        spacing = 20 * factor
+        self.layout.setSpacing(spacing)
         self.layout.setContentsMargins(*margin)
         self.grid_layout.addLayout(self.layout, 1, 0)
 
@@ -130,3 +136,6 @@ class FramelessDialog(QtWidgets.QDialog):
     def mouseReleaseEvent(self, event):
         self._mouse_pressed = False
         self._mouse_position = None
+
+    def minimumSizeHint(self):
+        return QtCore.QSize(640, 480)

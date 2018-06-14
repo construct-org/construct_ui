@@ -1,1 +1,1 @@
-recursive-include construct_ui/resources *.css *.scss *.png *.svg
+recursive-include construct_ui/resources *.css *.scss *.png *.svg *.ttf

@@ -10,6 +10,7 @@ from construct_ui.utils import get_scale_factor
 
 
 _log = logging.getLogger('construct.ui.resources')
+_initialized = False
 THIS_PATH = unipath(os.path.dirname(__file__))
 EXTENSIONS = ['', '.png', '.ttf', '.css']
 PATTERNS = [unipath(THIS_PATH, 'icons', '*.png')]
@@ -150,8 +151,14 @@ def qpixmap(resource, use_cache=True, cache={}):
 
 def init():
     '''Initialize resources and fonts'''
-    from construct_ui import _resources
-    from Qt import QtGui
-    for resource_path in list('fonts'):
-        font_path = path(resource_path)
-        QtGui.QFontDatabase.addApplicationFont(font_path)
+
+    global _initialized
+    if not _initialized:
+
+        from construct_ui import _resources
+        from Qt import QtGui
+        for resource_path in list('fonts'):
+            font_path = path(resource_path)
+            QtGui.QFontDatabase.addApplicationFont(font_path)
+
+    _initialized = True

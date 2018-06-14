@@ -31,6 +31,9 @@ class AsyncQuery(threading.Thread):
     def running(self):
         return self.started and not self.stopped
 
+    def shutdown(self):
+        return self._shutdown.is_set()
+
     def stop(self):
         self._shutdown.set()
         self._stopped.wait()

@@ -58,18 +58,17 @@ def not_implemented(obj):
 def get_dpi():
     '''Get screen DPI. Use to scale UI independent of monitor size.'''
 
-    from Qt.QtPrintSupport import QPrinter
+    from Qt import QtWidgets
 
-    p = QPrinter()
-    return p.physicalDpiX(), p.physicalDpiY()
+    app = QtWidgets.QApplication.instance()
+    if app:
+        return float(app.desktop().logicalDpiX())
+    return 96.0
 
 
 def get_scale_factor(factor=[]):
     '''Get scale factor for icons'''
 
     if not factor:
-        from Qt import QtWidgets
-        label = QtWidgets.QLabel('UNIT')
-        label.setStyleSheet('QLabel{font-size: 72pt;}')
-        factor.append(float(get_dpi()[1] / label.sizeHint().height()))
+        factor.append(get_dpi() / 96.0)
     return factor[0]

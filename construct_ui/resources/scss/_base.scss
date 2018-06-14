@@ -1,9 +1,9 @@
 // Fonts
-$font-stack: Roboto Regular, Helvetica, Arial, sans-serif !default;
+$font-stack: Roboto Light, Helvetica, Arial, sans-serif !default;
 $font-size: 12pt !default;
 $font-weight: normal;
 
-$font-light-stack: Roboto Thin, Helvetica, Arial, sans-serif !default;
+$font-light-stack: Roboto Regular, Helvetica, Arial, sans-serif !default;
 
 // Colors
 $transparent: rgba(255, 255, 255, 0);
@@ -15,7 +15,8 @@ $disabled-color: #fff * 0.45 !default;
 $error-color: rgb(203, 40, 40) !default;
 
 // Borders
-$border-radius: 2px !default;
+$border-radius: 0px !default;
+$border: 1px solid $focus-color !default;
 $text-padding: 8px !default;
 
 // Base
@@ -34,11 +35,14 @@ QWidget {
 // QLabels
 
 QLabel {
-    padding: 8px 20px 8px 20px;
+    padding: 0;
 }
 
 QLabel[titlebar=true] {
-    padding: 8px 20px 8px 20px;
+    padding-top: $text-padding;
+    padding-bottom: $text-padding;
+    padding-left: $text-padding;
+    padding-right: $text-padding;
     font: 100% $font-light-stack;
     font-size: 10pt;
 }
@@ -57,8 +61,8 @@ QLineEdit{
     color: $primary-color;
     padding-top: $text-padding;
     padding-bottom: $text-padding;
-    padding-left: $text-padding * 2;
-    padding-right: $text-padding * 2;
+    padding-left: $text-padding;
+    padding-right: $text-padding;
 }
 
 QLineEdit[valid=false]{
@@ -81,6 +85,7 @@ QPushButton {
     border-radius: $border-radius;
     padding: $text-padding;
     color: $primary-color;
+    border: $border;
     background: $transparent;
     outline: none;
     min-width: 120px;

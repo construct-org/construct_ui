@@ -22,6 +22,7 @@ class ActionForm(View):
         ctx = ctx or construct.get_context()
         super(ActionForm, self).__init__(ctx, *args, **kwargs)
 
+        self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.accepted.connect(self.on_accept)
         self.rejected.connect(self.on_reject)
         if hasattr(self, 'setWindowTitle'):
@@ -46,6 +47,15 @@ class ActionForm(View):
         '''Return args to pass to the form's Action'''
 
         return ()
+
+    def cleanup(self):
+        '''Implement to register some cleanup code'''
+
+        return NotImplemented
+
+    def closeEvent(self, event):
+        self.cleanup()
+        super(ActionForm, self).closeEvent(event)
 
     @abstractmethod
     def get_kwargs(self):

@@ -1,11 +1,14 @@
 Release Notes
 =============
 
-0.1.6 (pending)
+0.1.6 (06-14-2018)
 
 * Refactor code base
 * Add basic dpi scaling
 * Add Question dialog
 * Add Roboto Font
 * Add more icons
+* Add cleanup method to ActionForm
+* Cleanup query threads in filesave and fileopen dialogs
 * Rename IconButton to Icon
+* Update MANIFEST.in to include fonts

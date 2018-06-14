@@ -1,5 +1,5 @@
 QWidget {
-  font: 100% Roboto Regular, Helvetica, Arial, sans-serif;
+  font: 100% Roboto Light, Helvetica, Arial, sans-serif;
   font-size: 12pt;
   font-weight: normal;
   background: #fff;
@@ -8,11 +8,14 @@ QWidget {
   selection-color: #000; }
 
 QLabel {
-  padding: 8px 20px 8px 20px; }
+  padding: 0; }
 
 QLabel[titlebar=true] {
-  padding: 8px 20px 8px 20px;
-  font: 100% Roboto Thin, Helvetica, Arial, sans-serif;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 8px;
+  padding-right: 8px;
+  font: 100% Roboto Regular, Helvetica, Arial, sans-serif;
   font-size: 10pt; }
 
 QLabel[valid=false] {
@@ -20,13 +23,13 @@ QLabel[valid=false] {
 
 QLineEdit {
   background: #e6e6e6;
-  border-radius: 2px;
+  border-radius: 0px;
   border: 0;
   color: #000;
   padding-top: 8px;
   padding-bottom: 8px;
-  padding-left: 16px;
-  padding-right: 16px; }
+  padding-left: 8px;
+  padding-right: 8px; }
 
 QLineEdit[valid=false] {
   border: 1px solid #cb2828;
@@ -40,9 +43,10 @@ QLineEdit[valid=false] {
   background: #e6e6e6; }
 
 QPushButton {
-  border-radius: 2px;
+  border-radius: 0px;
   padding: 8px;
   color: #000;
+  border: 1px solid #e6e6e6;
   background: rgba(255, 255, 255, 0%);
   outline: none;
   min-width: 120px; }
@@ -60,7 +64,7 @@ QSpinBox,
 QDoubleSpinBox {
   background: #e6e6e6;
   color: #000;
-  border-radius: 2px;
+  border-radius: 0px;
   outline: none;
   padding: 8px;
   padding-left: 16px;
@@ -103,7 +107,7 @@ QDoubleSpinBox::down-button {
 QComboBox {
   background: #e6e6e6;
   color: #000;
-  border-radius: 2px;
+  border-radius: 0px;
   outline: none;
   padding: 8px;
   padding-left: 16px;

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-from Qt import QtWidgets
+from Qt import QtWidgets, QtCore
 
 from construct_ui.controls.control import Control
 

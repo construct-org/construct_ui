@@ -88,6 +88,10 @@ class FileOpenForm(ActionForm, QtWidgets.QDialog):
 
         self.setLayout(self.grid)
 
+    def cleanup(self):
+        self.project_option.stop_query()
+        self.workspace_option.stop_query()
+
     def update(self):
         if self.project_option.get() is not self.data.project:
             self.project_option.set(self.data.project)
