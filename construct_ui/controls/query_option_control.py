@@ -66,7 +66,7 @@ class QueryOptionControl(Control, QtWidgets.QComboBox):
 
     def stop_query(self):
         if not self.query.stopped():
-            self.query.stop()
+            self.query.stop_later()
 
     def set_query(self, query, default=None):
         self.stop_query()

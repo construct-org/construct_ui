@@ -54,8 +54,8 @@ class ActionForm(View):
         return NotImplemented
 
     def closeEvent(self, event):
-        self.cleanup()
         super(ActionForm, self).closeEvent(event)
+        self.cleanup()
 
     @abstractmethod
     def get_kwargs(self):

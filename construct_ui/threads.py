@@ -34,7 +34,12 @@ class AsyncQuery(threading.Thread):
     def shutdown(self):
         return self._shutdown.is_set()
 
+    def stop_later(self):
+        self.result.disconnect()
+        self._shutdown.set()
+
     def stop(self):
+        self.result.disconnect()
         self._shutdown.set()
         self._stopped.wait()
         if self.isAlive():
