@@ -56,7 +56,7 @@ def not_implemented(obj):
 
 
 def get_dpi():
-    '''Get screen DPI. Use to scale UI independent of monitor size.'''
+    '''Get screen DPI to scale UI independent of monitor size.'''
 
     from Qt import QtWidgets
 
@@ -67,7 +67,7 @@ def get_dpi():
 
 
 def get_scale_factor(factor=[]):
-    '''Get scale factor for icons'''
+    '''Get UI scale factor'''
 
     if not factor:
         factor.append(get_dpi() / 96.0)

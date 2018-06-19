@@ -42,7 +42,7 @@ def read(resource):
     '''Read a resource'''
 
     resource_path = path(resource)
-    with open(resource_path, 'rb') as f:
+    with open(resource_path, 'r') as f:
         return f.read()
 
 

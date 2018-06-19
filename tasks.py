@@ -20,6 +20,7 @@ def rcc_cmd():
         'pyrcc4', 'pyrcc4.exe', 'pyrcc4.bat',  # PyQt4
         'pyrcc5', 'pyrcc5.exe', 'pyrcc5.bat',  # PyQt5
         'pyside-rcc', 'pyside-rcc.exe',  # PySide
+        'pyside2-rcc', 'pyside2-rcc.exe',  # PySide
     ]
     for name in potential_names:
         potential_path = rel_path(qtdir, name)
