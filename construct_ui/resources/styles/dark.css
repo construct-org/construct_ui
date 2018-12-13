@@ -224,7 +224,8 @@ QScrollBar::sub-line:horizontal {
 QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
   background: none; }
 
-QTreeView {
+QTreeView,
+QListView {
   show-decoration-selected: 1;
   border: 0;
   padding: 0;
@@ -232,22 +233,32 @@ QTreeView {
   outline: none;
   border: 1px solid #4d4d4d; }
 
-QTreeView::item, QTreeView::branch {
+QTreeView::item,
+QTreeView::branch,
+QListView::item {
   border: 0;
   border-bottom: 1px solid #4d4d4d;
   padding: 8px; }
 
-QTreeView::item:hover, QTreeView::branch:hover {
+QTreeView::item:hover,
+QTreeView::branch:hover,
+QListView::item:hover {
   border: 0;
   background: #4d4d4d; }
 
-QTreeView::item:selected, QTreeView::branch:selected {
+QTreeView::item:selected,
+QTreeView::branch:selected,
+QListView::item:selected {
   border: 0; }
 
-QTreeView::item:selected:active, QTreeView::branch:selected:active {
+QTreeView::item:selected:active,
+QTreeView::branch:selected:active,
+QListView::item:selected:active {
   background: #595959; }
 
-QTreeView::item:selected:!active, QTreeView::branch:selected:!active {
+QTreeView::item:selected:!active,
+QTreeView::branch:selected:!active,
+QListView::item:selected:!active {
   background: #595959;
   color: #f2f2f2; }
 

@@ -38,7 +38,7 @@ class FileSaveForm(ActionForm, QtWidgets.QDialog):
         query = construct.search(
             root=self.data.root,
             tags=['project'],
-            depth=2
+            depth=1
         )
 
         self.project_option = QueryOptionControl(

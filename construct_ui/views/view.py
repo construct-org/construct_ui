@@ -6,14 +6,10 @@ from construct_ui.utils import ABCNonMeta, not_implemented
 
 class View(ABCNonMeta):
     '''
-    Mixin base class for all Control widgets. The purpose of the Control Mixin
-    is to ensure a unified API across all Control widgets.
+    Mixin base class for all View widgets. The purpose of the View Mixin
+    is to ensure a unified API across all View widgets.
 
-      - Controls emit a **changed** messaged when their control's value changes
-      - `Control.get` returns the value of a Control
-      - `Control.set` sets the value of a Control
-
-    Control should be used as the first base class of a control QWidget.
+    View should be used as the first base class of a view QWidget.
 
     Subclasses must use the create method to setup and create their widget/s.
     Users should call the send_changed method when their contol widget's value
@@ -21,35 +17,8 @@ class View(ABCNonMeta):
 
     Arguments:
         name (str): Name of the control
-        range (tuple): (min, max)
-        default (int): Default value
+        data (object): Object this view acts on
         parent (QWidget): Parent widget
-
-    Attributes:
-        changed (bands.channel): Emitted when a Control's value is changed.
-        name (str): Control name
-        default: Control's default value
-        valid (StyledProperty): True when control value is valid
-        error (StyledProperty): True when control value is invalid
-
-    Example:
-        Here is how we would implement a simple IntControl::
-
-            class IntControl(Control, QtWidgets.QSpinBox):
-
-                def create(self):
-                    self.setRange(0, 99)
-                    self.valueChanged.connect(self.send_changed)
-
-                def get(self):
-                    return self.value()
-
-                def set(self, value):
-                    return self.setValue(value)
-
-            int_cntrl = IntControl()
-            int_cntrl.set(10)
-            assert int_cntrl.get() == 10
     '''
 
     def __init__(self, data, *args, **kwargs):

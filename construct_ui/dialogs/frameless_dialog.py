@@ -50,7 +50,7 @@ class FramelessDialog(QtWidgets.QDialog):
             QtWidgets.QSizePolicy.Expanding,
         )
 
-        self.title_label = QtWidgets.QLabel(title, parent=self)
+        self.title_label = QtWidgets.QLabel(title)
         self.title_label.setProperty('titlebar', True)
         self.title_label.setSizePolicy(
             QtWidgets.QSizePolicy.Expanding,
@@ -58,7 +58,7 @@ class FramelessDialog(QtWidgets.QDialog):
         )
         self.title_label.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
         self.title_label.setFocusPolicy(QtCore.Qt.NoFocus)
-        self.close_button = Icon(':/icons/close', size=24, parent=self)
+        self.close_button = Icon(':/icons/close', size=24)
         self.close_button.clicked.connect(self.reject)
         self.titlebar_layout = QtWidgets.QHBoxLayout()
         self.titlebar_layout.addWidget(self.title_label)

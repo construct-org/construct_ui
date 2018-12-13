@@ -23,12 +23,12 @@ class Header(QtWidgets.QWidget):
         self.header_label.setFocusPolicy(QtCore.Qt.NoFocus)
 
         self.setMinimumHeight(48 * get_scale_factor())
-        self._layout = QtWidgets.QHBoxLayout()
-        self._layout.setContentsMargins(0, 0, 0, 0)
-        self._layout.addWidget(self.menu_button)
-        self._layout.addWidget(self.header_label)
-        self._layout.addStretch(1)
-        self.setLayout(self._layout)
+        self.layout = QtWidgets.QHBoxLayout()
+        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.addWidget(self.menu_button)
+        self.layout.addWidget(self.header_label)
+        self.layout.addStretch(1)
+        self.setLayout(self.layout)
 
     def show_menu(self):
         pos = QtCore.QPoint(0, self.menu_button.height())

@@ -35,6 +35,18 @@ def show_frameless_dialog():
     sys.exit(dialog.exec_())
 
 
+def show_collapsable_list():
+    app = QtWidgets.QApplication(sys.argv)
+    resources.init()
+
+    ls = widgets.CollapsableList('Projects')
+    ls.list_widget.addItems(['Project ' + char for char in 'ABCDEFGH'])
+    apply_style(ls, ':/styles/dark')
+    ls.show()
+
+    sys.exit(app.exec_())
+
+
 def show_header():
 
     def null():
@@ -122,4 +134,4 @@ def show_action_forms():
 
 
 if __name__ == '__main__':
-    ask_a_question()
+    show_collapsable_list()

@@ -56,6 +56,8 @@ class AsyncQuery(threading.Thread):
                 except StopIteration:
                     break
                 else:
+                    if self._shutdown.is_set():
+                        break
                     self.result.emit(entry)
         finally:
             self._stopped.set()
