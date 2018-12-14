@@ -38,7 +38,8 @@ class FileSaveForm(ActionForm, QtWidgets.QDialog):
         query = construct.search(
             root=self.data.root,
             tags=['project'],
-            depth=1
+            depth=1,
+            levels=1
         )
 
         self.project_option = QueryOptionControl(
@@ -160,9 +161,8 @@ class FileSaveForm(ActionForm, QtWidgets.QDialog):
     def project_changed(self, control):
         tags = self.data.workspace.tags
         project = control.get()
-        workspace = project.children(*tags).one()
-
-        query = project.children(*tags)
+        workspace = project.children().tags(*tags).one()
+        query = project.children().tags(*tags)
         self.workspace_option.set_query(query, workspace)
 
     def workspace_changed(self, control):

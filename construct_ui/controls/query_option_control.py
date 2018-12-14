@@ -4,7 +4,7 @@ from __future__ import absolute_import
 from Qt import QtWidgets, QtCore
 
 from construct_ui.controls.control import Control
-from construct_ui.threads import AsyncQuery
+from construct_ui import async
 
 
 class AnyCompleter(QtWidgets.QCompleter):
@@ -55,7 +55,7 @@ class AnyCompleter(QtWidgets.QCompleter):
 class QueryOptionControl(Control, QtWidgets.QComboBox):
 
     def __init__(self, name, query, formatter, default=None, parent=None):
-        self.query = AsyncQuery(query)
+        self.query = async.submit(query)
         self.formatter = formatter
         self.options = []
         self.models = []
@@ -65,8 +65,7 @@ class QueryOptionControl(Control, QtWidgets.QComboBox):
         super(QueryOptionControl, self).__init__(name, default, parent)
 
     def stop_query(self):
-        if not self.query.stopped():
-            self.query.stop_later()
+        self.query.stop_later()
 
     def set_query(self, query, default=None):
         self.stop_query()
@@ -80,8 +79,8 @@ class QueryOptionControl(Control, QtWidgets.QComboBox):
             self.set(default)
             self.send_changed()
 
-        self.query = AsyncQuery(query)
-        self.query.result.connect(self.add_model)
+        self.query = async.submit(query)
+        self.query.on_result(self.add_model)
         self.query.start()
 
     def add_model(self, model):
@@ -113,7 +112,7 @@ class QueryOptionControl(Control, QtWidgets.QComboBox):
         self.setItemDelegate(self.styled_delegate)
 
         # Run query thread
-        self.query.result.connect(self.add_model)
+        self.query.on_result(self.add_model)
         self.query.start()
 
     def get(self):

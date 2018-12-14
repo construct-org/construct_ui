@@ -24,7 +24,8 @@ class FileOpenForm(ActionForm, QtWidgets.QDialog):
         query = construct.search(
             root=self.data.root,
             tags=['project'],
-            depth=2
+            depth=1,
+            levels=1
         )
 
         self.project_option = QueryOptionControl(
@@ -105,9 +106,9 @@ class FileOpenForm(ActionForm, QtWidgets.QDialog):
     def project_changed(self, control):
         tags = self.data.workspace.tags
         project = control.get()
-        workspace = project.children(*tags).one()
+        workspace = project.children().tags(*tags).one()
+        query = project.children().tags(*tags)
 
-        query = project.children(*tags)
         self.workspace_option.set_query(query, workspace)
 
     def workspace_changed(self, control):
