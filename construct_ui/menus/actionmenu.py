@@ -46,14 +46,9 @@ def create_action_menu_item(action, parent):
         available, just run the action.
         '''
 
-        host = construct.get_host()
-        parent = host.get_qt_parent()
-        form_cls = construct.get_form(action.identifier)
-        if form_cls:
-            form = form_cls(action, construct.get_context(), parent)
-            form.setStyleSheet(resources.style(':/styles/dark'))
-            form.show()
-        else:
+        try:
+            construct.show_form(action.identifier)
+        except:
             action().run()
 
     qaction = QtWidgets.QAction(action.label, parent)

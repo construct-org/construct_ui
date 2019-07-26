@@ -134,4 +134,4 @@ def show_action_forms():
 
 
 if __name__ == '__main__':
-    show_collapsable_list()
+    ask_a_question()

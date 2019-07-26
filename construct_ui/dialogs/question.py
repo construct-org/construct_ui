@@ -50,6 +50,6 @@ def ask(question, more=None, title=None):
         parent = None
 
     dialog = Question(question, more, title, parent)
-    dialog.setStyleSheet(resources.style(':/styles/dark'))
+    dialog.setStyleSheet(resources.style(construct.config['STYLE']))
 
     return bool(dialog.exec_())
