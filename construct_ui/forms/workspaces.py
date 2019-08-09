@@ -114,29 +114,3 @@ class SetWorkspaceForm(ActionForm, QtWidgets.QDialog):
     def workspace_changed(self, control):
         ctx = construct.Context.from_path(control.get().path)
         self.set_data(ctx)
-
-    def update_version(self, control):
-        workspace = self.data.workspace
-        name = self.name_control.get()
-        ext = self.ext_control.get()
-        next_version = workspace.get_next_version(name, ext)
-        self.version_control.set(next_version)
-        self.update_preview()
-
-    def update_preview(self, *args):
-        new_filename = self.generate_preview()
-        self.name_preview.setText(new_filename)
-        full_path = utils.unipath(self.data.workspace.path, new_filename)
-        self.name_preview.valid = not os.path.exists(full_path)
-
-    def generate_preview(self):
-        data = self.get_kwargs()
-        data['task'] = self.data
-        data['version'] = '{0:>3d}'.format(data['version'])
-        tmpl = construct.get_path_template('workspace_file')
-        return tmpl.format(dict(
-            task=self.data.task.short,
-            name=self.name_control.get(),
-            version='{:0>3d}'.format(self.version_control.get()),
-            ext=self.ext_control.get()
-        ))
