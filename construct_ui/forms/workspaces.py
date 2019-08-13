@@ -17,7 +17,7 @@ from construct_ui.widgets import RightLabel, Label
 class SetWorkspaceForm(ActionForm, QtWidgets.QDialog):
 
     def get_kwargs(self):
-        return dict(workspace=self.workspace_option.get())
+        return dict(task=self.task_option.get())
 
     def create(self):
 
@@ -46,30 +46,27 @@ class SetWorkspaceForm(ActionForm, QtWidgets.QDialog):
         )
         self.project_option.changed.connect(self.project_changed)
 
-        # Setup workspace control
-        def format_workspace(workspace):
-            parents = list(workspace.parents())[::-1]
+        # Setup task control
+        def format_task(task):
+            parents = list(task.parents())[::-1]
             if parents:
-                parts = parents[max(0, len(parents) - 3):] + [workspace]
+                parts = parents[1:] + [task]
                 return '/'.join([p.name for p in parts])
             else:
-                return workspace.name
+                return task.name
 
-        if self.data.workspace:
-            tags = self.data.workspace.tags
-        else:
-            tags = ['workspace']
+        tags = ['task']
 
         query = construct.search(root=self.data.project.path, tags=tags)
 
-        self.workspace_option = QueryOptionControl(
-            'workspace',
+        self.task_option = QueryOptionControl(
+            'task',
             query=query,
-            formatter=format_workspace,
-            default=self.data.workspace,
+            formatter=format_task,
+            default=self.data.task,
             parent=self
         )
-        self.workspace_option.changed.connect(self.workspace_changed)
+        self.task_option.changed.connect(self.task_changed)
 
         # Setup save button
         self.set_workspace_button = QtWidgets.QPushButton('Set', self)
@@ -78,39 +75,37 @@ class SetWorkspaceForm(ActionForm, QtWidgets.QDialog):
         self.grid = QtWidgets.QGridLayout()
         self.grid.setContentsMargins(20, 20, 20, 20)
         self.grid.setVerticalSpacing(20)
-        self.grid.setRowMinimumHeight(2, 36)
-        self.grid.setRowMinimumHeight(2, 36)
         self.grid.setColumnStretch(1, 1)
-        self.grid.setRowStretch(3, 1)
+        self.grid.setRowStretch(2, 1)
 
         # Location controls
         self.grid.addWidget(RightLabel('Project'), 0, 0)
         self.grid.addWidget(self.project_option, 0, 1, 1, 3)
-        self.grid.addWidget(RightLabel('Workspace'), 1, 0)
-        self.grid.addWidget(self.workspace_option, 1, 1, 1, 3)
+        self.grid.addWidget(RightLabel('Task'), 1, 0)
+        self.grid.addWidget(self.task_option, 1, 1, 1, 3)
 
         # Buttons
-        self.grid.addWidget(self.save_button, 4, 3)
+        self.grid.addWidget(self.set_workspace_button, 3, 3)
 
         self.setLayout(self.grid)
 
     def cleanup(self):
         self.project_option.stop_query()
-        self.workspace_option.stop_query()
+        self.task_option.stop_query()
 
     def update(self):
         if self.project_option.get() is not self.data.project:
             self.project_option.set(self.data.project)
-        if self.workspace_option.get() is not self.data.workspace:
-            self.workspace_option.set(self.data.workspace)
+        if self.task_option.get() is not self.data.task:
+            self.task_option.set(self.data.task)
 
     def project_changed(self, control):
-        tags = self.data.workspace.tags
+        tags = self.data.task.tags
         project = control.get()
-        workspace = project.children().tags(*tags).one()
+        task = project.children().tags(*tags).one()
         query = project.children().tags(*tags)
-        self.workspace_option.set_query(query, workspace)
+        self.task_option.set_query(query, task)
 
-    def workspace_changed(self, control):
+    def task_changed(self, control):
         ctx = construct.Context.from_path(control.get().path)
         self.set_data(ctx)

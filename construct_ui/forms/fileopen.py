@@ -41,7 +41,7 @@ class FileOpenForm(ActionForm, QtWidgets.QDialog):
         def format_workspace(workspace):
             parents = list(workspace.parents())[::-1]
             if parents:
-                parts = parents[max(0, len(parents) - 3):] + [workspace]
+                parts = parents[1:] + [workspace]
                 return '/'.join([p.name for p in parts])
             else:
                 return workspace.name

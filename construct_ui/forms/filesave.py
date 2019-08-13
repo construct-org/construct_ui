@@ -55,7 +55,7 @@ class FileSaveForm(ActionForm, QtWidgets.QDialog):
         def format_workspace(workspace):
             parents = list(workspace.parents())[::-1]
             if parents:
-                parts = parents[max(0, len(parents) - 3):] + [workspace]
+                parts = parents[1:] + [workspace]
                 return '/'.join([p.name for p in parts])
             else:
                 return workspace.name
@@ -110,7 +110,6 @@ class FileSaveForm(ActionForm, QtWidgets.QDialog):
         self.grid = QtWidgets.QGridLayout()
         self.grid.setContentsMargins(20, 20, 20, 20)
         self.grid.setVerticalSpacing(20)
-        self.grid.setRowMinimumHeight(2, 36)
         self.grid.setRowMinimumHeight(2, 36)
         self.grid.setColumnStretch(1, 1)
         self.grid.setRowStretch(3, 1)
