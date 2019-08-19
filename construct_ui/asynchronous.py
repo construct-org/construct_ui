@@ -7,20 +7,60 @@ import traceback
 from Qt import QtCore, QtWidgets
 
 
-POOL = None
+def submit_async(task, *args, **kwargs):
+    '''Submit a function to run in the global QThreadPool.
 
+    Arguments:
+        task (callable or iterable): A Function to call or generator to consume
+        *args: Arguments to pass to task
+        **kwargs: Keyword Arguments to pass to task
 
-def get_pool():
-    global POOL
-    if not POOL:
-        POOL = AsyncPool()
-    return POOL
+    Returns:
+        AsyncTask
 
+    Examples:
+        # Start a long running background task
+        def print_result(result):
+            print(result)
 
-def submit_async(fn, *args, **kwargs):
+        def long_running_query():
+            for i in range(100):
+                yield i
+                time.sleep(1)
 
-    pool = get_pool()
-    return pool.submit(fn, *args, **kwargs)
+        task = submit_async(long_running_query)
+        task.on_result(print_result)
+        task.start()
+
+        # Wait for results
+        task.wait()
+    '''
+
+    # task is a generator function
+    # meaning we have to actually initialize it by calling it
+    if inspect.isgeneratorfunction(task):
+        qrunnable = AsyncIterator(task(*args, **kwargs))
+
+    # Task is not a generator function but is iterable
+    elif hasattr(task, '__iter__'):
+        # if args and kwargs are passed we assumed that it is an object
+        # that needs to be initialized with those params then consumed
+        if args or kwargs:
+            qrunnable = AsyncIterator(task(*args, **kwargs))
+        # assume that the object has already been initialized and we
+        # just need to consume it
+        else:
+            qrunnable = AsyncIterator(task)
+
+    # We've got a callable task, either a function or object with a __call__
+    # method
+    elif callable(task):
+        qrunnable = AsyncCallable(task, *args, **kwargs)
+    else:
+        raise TypeError('Unsupport type: %s %s' % (task, type(task)))
+
+    pool = QtCore.QThreadPool.globalInstance()
+    return AsyncTask(qrunnable, pool)
 
 
 class AsyncSignals(QtCore.QObject):
@@ -155,23 +195,6 @@ class AsyncIterator(QtCore.QRunnable):
         self.signals.finished.emit()
 
 
-class AsyncPool(QtCore.QThreadPool):
-
-    def submit(self, task, *args, **kwargs):
-        if inspect.isgeneratorfunction(task):
-            qrunnable = AsyncIterator(task(*args, **kwargs))
-        elif hasattr(task, '__iter__'):
-            if args or kwargs:
-                qrunnable = AsyncIterator(task(*args, **kwargs))
-            else:
-                qrunnable = AsyncIterator(task)
-        elif callable(task):
-            qrunnable = AsyncCallable(task, *args, **kwargs)
-        else:
-            raise TypeError('Unsupport type: %s %s' % (task, type(task)))
-        return AsyncTask(qrunnable, self)
-
-
 class AsyncTask(object):
 
     def __init__(self, qrunnable, qthreadpool):
@@ -207,34 +230,3 @@ class AsyncTask(object):
 
     def on_finished(self, callback):
         self.qrunnable.signals.finished.connect(callback)
-
-
-if __name__ == '__main__':
-    import fsfs
-    from Qt import QtWidgets
-
-    def long_running_task(n):
-        for i in xrange(n):
-            time.sleep(1)
-            yield i
-
-    def print_results(value):
-        print('Task result: ' + str(value))
-
-    def print_finished():
-        print('Task finished.')
-        sys.exit()
-
-    app = QtWidgets.QApplication([])
-
-    task = async_task(
-        fsfs.search(root='Z:/Active_Projects', depth=2, levels=4).tags('asset')
-    )
-    task.on_result(print_results)
-    task.on_finished(print_finished)
-    task.start()
-    task.wait()
-
-    timer = QtCore.QTimer.singleShot(1000, task.stop)
-
-    sys.exit(app.exec_())
