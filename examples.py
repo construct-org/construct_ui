@@ -2,7 +2,7 @@
 from __future__ import absolute_import
 import sys
 
-from Qt import QtWidgets
+from Qt import QtWidgets, QtCore
 
 import construct
 from construct_ui import resources, dialogs, widgets
@@ -65,8 +65,9 @@ def show_header():
     header.add_menu_item('Item 4', null)
     layout = QtWidgets.QVBoxLayout()
     layout.setContentsMargins(0, 0, 0, 0)
+    layout.setSpacing(0)
     layout.addWidget(header)
-    layout.addStretch(1)
+    layout.setAlignment(QtCore.Qt.AlignTop)
     dialog.setLayout(layout)
 
     sys.exit(dialog.exec_())
@@ -134,4 +135,4 @@ def show_action_forms():
 
 
 if __name__ == '__main__':
-    ask_a_question()
+    show_header()

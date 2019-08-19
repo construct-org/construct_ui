@@ -72,3 +72,9 @@ def get_scale_factor(factor=[]):
     if not factor:
         factor.append(get_dpi() / 96.0)
     return factor[0]
+
+
+def pix(value):
+    '''Scale a pixel factor by the screen scale factor'''
+
+    return get_scale_factor() * value

@@ -5,7 +5,7 @@ from Qt import QtWidgets, QtCore, QtGui
 from bands import channel
 
 from construct_ui import resources
-from construct_ui.utils import get_scale_factor
+from construct_ui.utils import pix
 from construct_ui.styled_property import StyledProperty
 
 
@@ -21,8 +21,7 @@ class Icon(QtWidgets.QLabel):
         self.setAlignment(QtCore.Qt.AlignCenter)
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.setPixmap(resources.qpixmap(icon))
-        _size = size * get_scale_factor()
-        self.size = QtCore.QSize(_size, _size)
+        self.size = QtCore.QSize(pix(size), pix(size))
 
     def minimumSizeHint(self):
         return self.size
@@ -55,8 +54,7 @@ class ToggleIcon(QtWidgets.QLabel):
         self.disabled_icon = resources.qpixmap(disabled_icon)
         self.enabled_icon = resources.qpixmap(enabled_icon)
         self.setPixmap(self.disabled_icon)
-        _size = size * get_scale_factor()
-        self.size = QtCore.QSize(_size, _size)
+        self.size = QtCore.QSize(pix(size), pix(size))
         self.enabled = False
 
     def toggle(self):

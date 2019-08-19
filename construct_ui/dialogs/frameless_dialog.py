@@ -4,7 +4,7 @@ from __future__ import absolute_import
 from Qt import QtWidgets, QtCore
 
 from construct_ui.widgets import Icon
-from construct_ui.utils import get_scale_factor
+from construct_ui.utils import pix
 
 
 class FramelessDialog(QtWidgets.QDialog):
@@ -71,9 +71,8 @@ class FramelessDialog(QtWidgets.QDialog):
         self.grid_layout.addLayout(self.titlebar_layout, 0, 0)
         self.grid_layout.setRowStretch(1, 1)
         self.layout = QtWidgets.QVBoxLayout()
-        factor = get_scale_factor()
-        margin = [16 * factor] * 4
-        spacing = 20 * factor
+        margin = [pix(16)] * 4
+        spacing = pix(20)
         self.layout.setSpacing(spacing)
         self.layout.setContentsMargins(*margin)
         self.grid_layout.addLayout(self.layout, 1, 0)
