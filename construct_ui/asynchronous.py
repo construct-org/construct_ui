@@ -1,10 +1,21 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function
 import inspect
+import logging
 import sys
 import time
 import traceback
 from Qt import QtCore, QtWidgets
+
+
+_log = logging.getLogger('construct.async')
+
+
+
+def event_reporter(event_name, task):
+    def reporter(*args, **kwargs):
+        _log.debug('%s | %s | %s, %s' % (task, event_name, args, kwargs))
+    return reporter
 
 
 def submit_async(task, *args, **kwargs):
@@ -60,7 +71,14 @@ def submit_async(task, *args, **kwargs):
         raise TypeError('Unsupport type: %s %s' % (task, type(task)))
 
     pool = QtCore.QThreadPool.globalInstance()
-    return AsyncTask(qrunnable, pool)
+    task = AsyncTask(qrunnable, pool)
+
+    # Inject reporters
+    task.on_started(event_reporter('started', task))
+    task.on_error(event_reporter('error', task))
+    task.on_finished(event_reporter('finished', task))
+
+    return task
 
 
 class AsyncSignals(QtCore.QObject):
@@ -184,6 +202,7 @@ class AsyncIterator(QtCore.QRunnable):
             except:
                 self.error = sys.exc_info()
                 self.signals.error.emit(self.error)
+                break
             else:
                 if self.shutdown:
                     break
