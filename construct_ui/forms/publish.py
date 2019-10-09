@@ -51,19 +51,22 @@ class PublishForm(ActionForm, QtWidgets.QDialog):
         self.title_label.setFocus()
 
         self.title_label.setText('Publish ' + os.path.basename(self.data.file))
-        self.question_label = Label(
-            'Would you like to publish the current workfile?',
+        self.header_label = Label(
+            'Publish the current workfile?',
             parent=self,
         )
-        self.more_label = Label(
-            (
-                '- Save current workfile\n'
-                '- Flatten references\n'
-                '- Save publish file\n'
-                '- Open next workfile'
-            ),
-            parent=self,
-        )
+
+        action_ctx = construct.ActionContext(self.action, (), {})
+        group_tmpl = '{}<br>'
+        task_tmpl = '<b>{}</b> - {}<br>'
+        summary = ''
+        for group, tasks in action_ctx.task_groups.items():
+            summary += group_tmpl.format(group.description)
+            summary += '<p style="padding: 0; margin: 0px 0px 0px 20px;">'
+            for task in tasks:
+                summary += task_tmpl.format(task.identifier, task.description)
+            summary += '</p>'
+        self.summary_label = Label(summary, self)
 
         self.buttons = QtWidgets.QDialogButtonBox(
             QtWidgets.QDialogButtonBox.Yes |
@@ -77,8 +80,8 @@ class PublishForm(ActionForm, QtWidgets.QDialog):
         spacing = pix(20)
         self.layout.setSpacing(spacing)
         self.layout.setContentsMargins(*margin)
-        self.layout.addWidget(self.question_label)
-        self.layout.addWidget(self.more_label)
+        self.layout.addWidget(self.header_label)
+        self.layout.addWidget(self.summary_label)
         self.layout.addStretch(1)
         self.layout.addWidget(self.buttons)
 
@@ -88,6 +91,7 @@ class PublishForm(ActionForm, QtWidgets.QDialog):
         self.grid_layout.setRowStretch(1, 1)
         self.grid_layout.addLayout(self.layout, 1, 0)
         self.setLayout(self.grid_layout)
+        self.adjustSize()
 
     def cleanup(self):
         pass
