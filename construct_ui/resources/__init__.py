@@ -101,8 +101,6 @@ def preview_icons():
         label = QtWidgets.QLabel(resource_path)
         copy = lambda: clipboard.setText(resource_path)
         icon.clicked.connect(copy, strong=True)
-        for r in icon.clicked.receivers._refs:
-            print(r)
         col, row = (i % columns) * 2, int(i * (1.0 / float(columns)))
         layout.addWidget(icon, row, col)
         layout.addWidget(label, row, col + 1)

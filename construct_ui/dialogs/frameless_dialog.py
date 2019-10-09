@@ -32,7 +32,7 @@ class FramelessDialog(QtWidgets.QDialog):
         'bottomLeft': QtCore.Qt.SizeBDiagCursor
     }
 
-    def __init__(self, title, parent=None):
+    def __init__(self, title='construct', parent=None):
         super(FramelessDialog, self).__init__(parent=parent)
 
         self._mouse_pressed = False
@@ -79,6 +79,10 @@ class FramelessDialog(QtWidgets.QDialog):
 
         self.title_label.setFocus()
         self.setLayout(self.grid_layout)
+
+    def setWindowTitle(self, title):
+        self.title_label.setText(title)
+        super(FramelessDialog, self).setWindowTitle(title)
 
     @property
     def resizing(self):
