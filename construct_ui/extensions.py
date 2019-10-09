@@ -20,3 +20,4 @@ class ActionUIProvider(Extension):
         self.add_form('file.open', forms.FileOpenForm)
         self.add_form('file.save', forms.FileSaveForm)
         self.add_form('set_workspace', forms.SetWorkspaceForm)
+        self.add_form('publish', forms.PublishForm)

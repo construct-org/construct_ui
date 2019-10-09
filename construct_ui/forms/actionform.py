@@ -3,7 +3,9 @@ from __future__ import absolute_import
 from abc import abstractmethod
 from Qt import QtCore
 import construct
+import traceback
 from construct_ui.views import View
+from construct_ui import dialogs
 
 
 class ActionForm(View):
@@ -38,7 +40,15 @@ class ActionForm(View):
         action_kwargs['ctx'] = action_ctx
         action = self.action(*action_args, **action_kwargs)
         self.close()
-        action.run()
+        try:
+            action.run()
+        except Exception as e:
+            dialogs.error(
+                header=action.label + ' failed to execute.',
+                body=str(e),
+                title=e.__class__.__name__ + '!'
+            )
+            raise
 
     def on_reject(self):
         self.close()

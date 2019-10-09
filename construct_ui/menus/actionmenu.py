@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
+import logging
 import construct
 from construct.action import group_actions
 from construct_ui import resources
 from Qt import QtWidgets
+
+
+_log = logging.getLogger('construct.menus')
 
 
 class ActionMenu(QtWidgets.QMenu):
@@ -48,7 +52,8 @@ def create_action_menu_item(action, parent):
 
         try:
             construct.show_form(action.identifier)
-        except:
+        except Exception as e:
+            _log.error('Failed to show ActionForm: %s', str(e))
             action().run()
 
     qaction = QtWidgets.QAction(action.label, parent)
