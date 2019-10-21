@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import logging
+import traceback
 import construct
 from construct.action import group_actions
 from construct_ui import resources
@@ -54,6 +55,7 @@ def create_action_menu_item(action, parent):
             construct.show_form(action.identifier)
         except Exception as e:
             _log.error('Failed to show ActionForm: %s', str(e))
+            traceback.print_exc()
             action().run()
 
     qaction = QtWidgets.QAction(action.label, parent)
