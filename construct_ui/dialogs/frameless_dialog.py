@@ -49,6 +49,7 @@ class FramelessDialog(QtWidgets.QDialog):
             QtWidgets.QSizePolicy.Expanding,
             QtWidgets.QSizePolicy.Expanding,
         )
+        self.setProperty('frameless', True)
 
         self.title_label = QtWidgets.QLabel(title)
         self.title_label.setProperty('titlebar', True)

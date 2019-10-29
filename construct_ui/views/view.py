@@ -4,7 +4,9 @@ from abc import abstractmethod
 from construct_ui.utils import ABCNonMeta, not_implemented
 
 
-class View(ABCNonMeta):
+# This was a subclass of ABCNonMeta
+# Nuke12 is using an outdated version of PySide2 that has issues with __new__
+class View(object):
     '''
     Mixin base class for all View widgets. The purpose of the View Mixin
     is to ensure a unified API across all View widgets.

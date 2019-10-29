@@ -9,7 +9,9 @@ from construct_ui.utils import ABCNonMeta
 from construct_ui.styled_property import StyledProperty
 
 
-class Control(ABCNonMeta):
+# This was a subclass of ABCNonMeta
+# Nuke12 is using an outdated version of PySide2 that has issues with __new__
+class Control(object):
     '''
     Mixin base class for all Control widgets. The purpose of the Control Mixin
     is to ensure a unified API across all Control widgets.

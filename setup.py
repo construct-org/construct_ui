@@ -45,7 +45,7 @@ setup(
     ],
     packages=find_packages(),
     include_package_data=True,
-    install_requires=['Qt.py', 'bands', 'libsass'],
+    install_requires=['Qt.py', 'bands', 'qtsass'],
     entry_points={
         'construct.extensions': 'construct_ui = construct_ui'
     }

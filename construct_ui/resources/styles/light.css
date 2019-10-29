@@ -7,6 +7,9 @@ QWidget {
   selection-background-color: #fff;
   selection-color: #000; }
 
+QWidget[frameless=true] {
+  border: 1px solid #e6e6e6; }
+
 QLabel {
   padding: 0; }
 

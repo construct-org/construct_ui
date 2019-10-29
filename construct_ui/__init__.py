@@ -3,7 +3,7 @@ from __future__ import absolute_import
 
 __title__ = 'construct_ui'
 __description__ = 'Construct UI'
-__version__ = '0.2.2'
+__version__ = '0.2.3'
 __author__ = 'Dan Bradham'
 __email__ = 'danielbradham@gmail.com'
 __license__ = 'MIT'
